@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Bulk Video Actions</title>
+    <style type="text/css">
+        body {
+            height: auto;
+            font-family: Verdana;
+            /*background-color: #E2E9F1;*/
+            font-size: 14px;
+        }
+
+        .command {
+            BORDER-RIGHT: #aab4be 1px dotted;
+            padding: 10px;
+            BORDER-TOP: #aab4be 1px dotted;
+            BACKGROUND: #f4f5f6;
+            BORDER-LEFT: #b4b4b4 4px solid;
+            BORDER-BOTTOM: #aab4be 1px dotted;
+            height: auto;
+            /*max-height: 600px;*/
+            /*margin-left: 15px;*/
+            margin-bottom: 10px;
+            width: 90%;
+            overflow-x: auto;
+            word-wrap: normal;
+            white-space: pre;
+        }
+
+        .Container1 {
+            padding-left: 2%;
+            padding-right: 2%;
+        }
+
+        .Container2 {
+            padding-left: 15px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        ul {
+            padding-left: 30px;
+        }
+
+        h3 {
+            background-color: aliceblue;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-left: 2%;
+            padding-right: 2%;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div id="BulkUploadVideos">
+            <h3><img height="18" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAB3RJTUUH2AQPDQ41X7L4igAAAAlwSFlzAAALEgAACxIB0t1+/AAAAARnQU1BAACxjwv8YQUAAAaSSURBVHjajVYNbBvlGX7u7jvb57MT23GSumlLW9LG+WlXMZpW0GYrlD8xNqGOJqvYRhmwom0CTdqQJpDQ/rpV0zZpggZEW4RUU37Ula1jGx2NCKUjrDSG0LA0ISTkv7Hjv9jnO999x3uXDWliHTvrrLvPd+/zPs/7vO9nAf/jOHL4cNNi2fiaBPs6n6K0BlR/GAKwuFjKaiVt0BbsHqYoz+7bu3fwcjGE/7Z4KJFo5Jp+IBKJfKU2GhG1YhETkxOYnJ2HYNtoWFaLVVeshM8fRCqdsedT6ZNe1feDu7q6hj4T4OnE89/k3Hwsvq5Rff31Mxidy6NmxVpEYyuhBquhmyZSqQzSMx9BT0+gsS6IL3yxA0MffKhZwIPf2tP15GUBnkoceyioqvtVjyi8+NezaN16A6pqojAqFizLhGFylA0LOl3rFQ6bXre0AlKDZ3HHjVtQgWRnstkf33vnnkc/BfDE0WN3BlT1GWYZwivJScQ3d6CsGxBFAUHFgzV1VVA9MkySKJXXkBxLIVcsE6gFmTEUxt7FlzbFIAWCdiZTuO/+r3c+9QnA7xKJK2DwgabVDcHE6QE0tGyBRVIIgohbrlqF9sZ6YsDBKTilTesCBAL+fd8oXu4fB+ecFkXw2fexd2crRqfnS7JX3HRfZ+ew6ABoeX1/S0s8eLznHGoar0a+qKNsAtc2L8dVa2pR0gySxkSFsnUy1o0KNFq7vX0NtrU0wKLgesUEj8ZxvCeJ5vg6fzanHXAZ/Lz7mVWhkP+DkJexV0ZtiEoIHg+jU8ZPv7rJ1dw5ZCYiU9DczIM+D0xOVIgOh4j7j/wdAl8CFo0idrdKKAsyT2fmmkXDKOyOLY+xt0fmYSsRkDDQuYD1sRBskkSkeyYJGJ5awP4T5/Fwog8lveJKZVk2Ah4JquIDFyT31FkA5z5cQKy+TiyXeSczbGGHk9ElHnBlkGVGmYmYyxbROzBOmcuoDys4dPYj/G2Kgnk8qFA9tAoZgCrolUWkixWQALAF4kOijxa8CPh9sLi9g0GUWnyqitk8RyAqQCI9bUgYThv4Q3IGqVyR6FOAUB2WR8M42LmenOQUnIOJEv5yfhyDcxrCioSwj+TzejA1Z4FRoswrNzMmS5GiRnYTSVdbAiEiVzIxtmBA8lWjJlBLrpEQUj144o61AIGZxIBJItm1iJ+8PISgPwLDMjCVrWB9PYMlq8jmChAYq2PlYokeJu1MKhjZb6HEMZWvUAYyJJJHdH4j4AO3rYZtGlRcuMEnU3l872g/fOEGcGo8pyiqX0Re5yiUlxiUacSIhWwmrfq8sCpkPQKZyhlgpKckOeoRAIHE64OoU2wsGUpwG+07z/0T/vq1nyThnFUq6U4KaJqGSDiE/EL6kqgtFgZnpyawalkVLi06nUu+IW0FyQGR6VpGrNoHidYVckyVwnBquIhg7Mr/CO4n7b1O1kRm3YoQFmZnUSwUBqXWz29Zxph0UzQSwT/mRHKRIw3718tUKNlDBtDw6tvDxE7HC+cmkMx4aF0hVZx5RJYgN4UIWKD7SwUDN68lFvPjmJycPkwtaL3w3uD75o6mCAQt744Bp+2XxoHoNlZDbRi/uWsbvtHRhF90teP6luWwRcFlKlP2NQGvO7MKBslYzOGm1gjevXCBjCYckwbO9+Ubm5vX0zzZ2N68En3EwutmT0zoZU4sdrcFEJUNdxyUDQPramT8aUSHwmyEvc444zRGTExny7i7TUJ67AJGRkaPP3/oYLc7izyS8KPe3jP5tmoDm6tzMNzhYLsfgc53xtJQZNKaVmliYGgmixpFJO8TC4pvkrVmCiY2qlm0x4DTp3uLlmQ/5ESRnK/3+vvzTa0tY33nzu964PbtwvR8FtNWACG/lwrLMEPOGpuaWQIbz+DPwxpoCwWnwZcvkf/zOlrkWTywtQq/fbzbJjX2/TFx9PSnNpzrb/3y92FXfvXgvm8LY1YU3UkTgdpl5BwvGD1p64sQZS9R9rvTNFsm2TJzuKdNRLM/h18/dpAoC4+cOnnyZ5fdMrfv3LmHmq972zVbg527duFNqsmZSRMX5snhtAc7By8VEI9K2L6C4ZqYjeMnTqCnt7ekBILf7T116shnbvpXd3SstsvlX/KKuetzG9uka7duRrwpTpPWmVM0uqkOFy8O4Y0330J/coCLgviSFPD/8K3XXhv5v/5V/PvYsGHDlaRnl2EY1xH1Vopb6zSiYZopctgg9UuPV5aPJZPJi5eL8TGGie0SXdHb9wAAAABJRU5ErkJggg==" />&nbsp;&nbsp;&nbsp; Bulk Upload Videos using CSV file</h3>
+            <div class="Container1">
+                <p> By using this action, you can bulk upload videos through csv file. You can provide either file path or folder path in csv file to upload videos. Office 365 Video does not support video of size more than 2 GB</p>
+                <p><b>Note:</b> Your csv file should contains the column headers <b>ChannelName</b>, <b>FilePath</b>, <b>Title</b> and <b>Description</b></p>
+                <b>Sample CSV file:</b>
+                    <pre class="command">ChannelName,FilePath,Title,Description
+"Tech Support","C:\TechVideos\testvid.wmv","Test Video","This is test video"
+"Sales Support","C:\SalesVideos\testvid1.wmv","Test Video 1","This is test video 1"
+"Sales Support","C:\SalesVideos\testvid2.wmv","Test Video 2","This is test video 2"
+"Demo Videos","C:\Demo\AllVideos",,</pre>
+                <ul>
+                    <li><b>ChannelName</b> - Name of the channel to upload videos.</li>
+                    <li><b>FilePath</b> - Video file path or folder path that contains the videos.</li>
+                    <li><b>Title</b> - Title of the video.(Leave empty if not required to set)</li>
+                    <li><b>Description</b> - Description of the video.(Leave empty if not required to set)</li>
+                </ul>
+</div>
+        </div>
+        <div id="ManageChannelPermissions">
+            <h3><img height="18" src="data:image/png;base64,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" />&nbsp;&nbsp;&nbsp; Manage Channel Permissions using CSV file</h3>
+            <div class="Container1">
+                <p> By using this action, you can manage/update channel permissions through csv file. You can add or remove permisions from a particular channel, to add you need to set the specified permission column as true, to remove set it as false, otherwise leave it as empty.</p>
+                <p><b>Note:</b> Your csv file should contains the column headers <b>ChannelName</b>, <b>UserEmail</b>, <b>Owners</b>, <b>Editors</b>,<b>Viewers</b></p>
+                <b>Sample CSV file:</b>
+                <pre class="command">ChannelName,UserEmail,Owners,Editors,Viewers
+"Tech Support",Admin@MODXXXX.onmicrosoft.com,true,true,true
+"Demo Videos",Admin@MODXXXX.onmicrosoft.com,true,true,true
+"Sales Support",Admin@MODXXXX.onmicrosoft.com,true,,
+"Sales Support",AlexD@MODXXXX.onmicrosoft.com,,true,
+"Sales Support","Everyone except external users",,,true
+"Demo Videos",SaraD@MODXXXX.onmicrosoft.com,false,false,false</pre>
+                <ul>
+                    <li><b>ChannelName</b> - Name of the channel to update permission.</li>
+                    <li><b>UserEmail</b> - User email, or group name to add or remove permission.</li>
+                    <li><b>Owners</b> - Set <b>ture</b> to add user as Owner, or set <b>false</b> to remove user from Owners group.</li>
+                    <li><b>Editors</b> - Set <b>ture</b> to add user as Editor, or set <b>false</b> to remove user from Editors group.</li>
+                    <li><b>Viewers</b> - Set <b>ture</b> to add user as Viewer, or set <b>false</b> to remove user from Viewers group.</li>
+                </ul>
+            </div>
+        </div>
+        <div id="BulkChannelCreation">
+            <h3><img height="18" src="data:image/png;base64,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" />&nbsp;&nbsp;&nbsp; Bulk Channel Creation using CSV file</h3>
+            <div class="Container1">
+                <p> By using this action, you can create bulk video channels and set channel permissions through csv file.</p>
+                <p><b>Note:</b> Your csv file should contains the column headers <b>ChannelName</b>, <b>Owners</b>, <b>Editors</b>, <b>Viewers</b></p>
+                <b>Sample CSV file:</b>
+                <pre class="command">ChannelName,Owners,Editors,Viewers
+"Tech Support","Admin@MODXXXX.onmicrosoft.com;AlexD@MODXXXX.onmicrosoft.com","Admin@MODXXXX.onmicrosoft.com","Everyone except external users"
+"Sales Support","Admin@MODXXXX.onmicrosoft.com;AlexD@MODXXXX.onmicrosoft.com","SaraD@MODXXXX.onmicrosoft.com","Everyone except external users"
+"Demo Videos","Admin@MODXXXX.onmicrosoft.com","Admin@MODXXXX.onmicrosoft.com;AlexD@MODXXXX.onmicrosoft.com","Everyone"</pre>
+            </div>
+            <ul>
+                <li><b>ChannelName</b> - Name of the channel to update permission.</li>
+                <li><b>Owners</b> - User email, or group name to add Owners.</li>
+                <li><b>Editors</b> - User email, or group name to add Editors.</li>
+                <li><b>Viewers</b> - User email, or group name to add Viewers.</li>
+                </ul>
+            <p><b>Note:</b> You can give multiple names as semi-colon (<b>;</b>) separeted values for Owners, Editors and Viewers</b></p>
+</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+﻿ChannelName,UserEmail,Owners,Editors,Viewers
+"Tech Support",Admin@MODXXXX.onmicrosoft.com,true,true,true
+"Demo Videos",Admin@MODXXXX.onmicrosoft.com,true,true,true
+"Sales Support",Admin@MODXXXX.onmicrosoft.com,true,,
+"Sales Support",AlexD@MODXXXX.onmicrosoft.com,,true,
+"Sales Support","Everyone except external users",,,true
+"Demo Videos",SaraD@MODXXXX.onmicrosoft.com,false,false,false

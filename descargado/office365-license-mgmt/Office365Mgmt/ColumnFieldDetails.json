@@ -1,0 +1,410 @@
+{
+  "ScopeType": {
+    "Type": 1
+  },
+  "RecipientType": {
+    "Type": 1
+  },
+  "ObjectLocation": {
+    "Type": 1
+  },
+  "AllowSignIn": {
+    "Type": 2
+  },
+  "PasswordNeverExpires": {
+    "Type": 2
+  },
+  "IsLicensed": {
+    "Type": 2
+  },
+  "ConnectorsEnabled": {
+    "Type": 2
+  },
+  "IsMembershipDynamic": {
+    "Type": 2
+  },
+  "AutoSubscribeNewMembers": {
+    "Type": 2
+  },
+  "AlwaysSubscribeMembersToCalendarEvents": {
+    "Type": 2
+  },
+  "RequireSenderAuthenticationEnabled": {
+    "Type": 2
+  },
+  "HiddenFromAddressListsEnabled": {
+    "Type": 2
+  },
+  "HiddenGroupMembershipEnabled": {
+    "Type": 2
+  },
+  "WhenCreated": {
+    "Type": 3
+  },
+  "WhenChanged": {
+    "Type": 3
+  },
+  "ActiveSyncEnabled": {
+    "Type": 2
+  },
+  "OWAEnabled": {
+    "Type": 2
+  },
+  "PopEnabled": {
+    "Type": 2
+  },
+  "ImapEnabled": {
+    "Type": 2
+  },
+  "MapiEnabled": {
+    "Type": 2
+  },
+  "LitigationHoldEnabled": {
+    "Type": 2
+  },
+  "UseDatabaseQuotaDefaults": {
+    "Type": 2
+  },
+  "InPlaceHoldsCount": {
+    "Type": 1
+  },
+  "DeliverToMailboxAndForward": {
+    "Type": 2
+  },
+  "RecipientTypeDetails": {
+    "Type": 1
+  },
+  "WhenMailboxCreated": {
+    "Type": 3
+  },
+  "LitigationHoldDate": {
+    "Type": 3
+  },
+  "SoftDeletionTimestamp": {
+    "Type": 3
+  },
+  "LastLogonTime": {
+    "Type": 3
+  },
+  "LastLogoffTime": {
+    "Type": 3
+  },
+  "ItemCount": {
+    "Type": 1
+  },
+  "Totalitemsize": {
+    "Type": 1
+  },
+  "TotalDeletedItemSize": {
+    "Type": 1
+  },
+  "DeletedItemCount": {
+    "Type": 1
+  },
+  "LogonTime": {
+    "Type": 3
+  },
+  "NumberMailboxesToSearch": {
+    "Type": 1
+  },
+  "PercentComplete": {
+    "Type": 1
+  },
+  "IsSoftDeletedByRemove": {
+    "Type": 2
+  },
+  "WhenSoftDeleted": {
+    "Type": 3
+  },
+  "OWAforDevicesEnabled": {
+    "Type": 2
+  },
+  "InstantMessagingEnabled": {
+    "Type": 2
+  },
+  "GroupCreationEnabled": {
+    "Type": 2
+  },
+  "SetPhotoEnabled": {
+    "Type": 2
+  },
+  "TextMessagingEnabled": {
+    "Type": 2
+  },
+  "UMIntegrationEnabled": {
+    "Type": 2
+  },
+  "ActiveSyncIntegrationEnabled": {
+    "Type": 2
+  },
+  "ContactsEnabled": {
+    "Type": 2
+  },
+  "AllowCopyContactsToDeviceAddressBook": {
+    "Type": 2
+  },
+  "LinkedInEnabled": {
+    "Type": 2
+  },
+  "AllAddressListsEnabled": {
+    "Type": 2
+  },
+  "JournalEnabled": {
+    "Type": 2
+  },
+  "NotesEnabled": {
+    "Type": 2
+  },
+  "RulesEnabled": {
+    "Type": 2
+  },
+  "RecoverDeletedItemsEnabled": {
+    "Type": 2
+  },
+  "ThemeSelectionEnabled": {
+    "Type": 2
+  },
+  "PremiumClientEnabled": {
+    "Type": 2
+  },
+  "SignaturesEnabled": {
+    "Type": 2
+  },
+  "CalendarEnabled": {
+    "Type": 2
+  },
+  "TasksEnabled": {
+    "Type": 2
+  },
+  "RemindersAndNotificationsEnabled": {
+    "Type": 2
+  },
+  "DirectFileAccessOnPrivateComputersEnabled": {
+    "Type": 2
+  },
+  "LogonType": {
+    "Type": 1
+  },
+  "Operation": {
+    "Type": 1
+  },
+  "OperationResult": {
+    "Type": 1
+  },
+  "LastAccessed": {
+    "Type": 3
+  },
+  "GroupType": {
+    "Type": 1
+  },
+  "ReportToOriginatorEnabled": {
+    "Type": 2
+  },
+  "ReportToManagerEnabled": {
+    "Type": 2
+  },
+  "SendOofMessageToOriginatorEnabled": {
+    "Type": 2
+  },
+  "LinkType": {
+    "Type": 1
+  },
+  "StorageSize": {
+    "Type": 1
+  },
+  "StorageQuota": {
+    "Type": 1
+  },
+  "StorageWarningLevel": {
+    "Type": 1
+  },
+  "FirstSyncTime": {
+    "Type": 3
+  },
+  "IsManaged": {
+    "Type": 2
+  },
+  "IsCompliant": {
+    "Type": 2
+  },
+  "IsDisabled": {
+    "Type": 2
+  },
+  "LastPolicyUpdateTime": {
+    "Type": 3
+  },
+  "LastSyncAttemptTime": {
+    "Type": 3
+  },
+  "LastSuccessSync": {
+    "Type": 3
+  },
+  "DeviceEnableOutboundSMS": {
+    "Type": 2
+  },
+  "Status": {
+    "Type": 1
+  },
+  "NumberOfFoldersSynced": {
+    "Type": 1
+  },
+  "SyncStateUpgradeTime": {
+    "Type": 3
+  },
+  "Date": {
+    "Type": 3
+  },
+  "ClientType": {
+    "Type": 1
+  },
+  "Count": {
+    "Type": 1
+  },
+  "Direction": {
+    "Type": 1
+  },
+  "EventType": {
+    "Type": 1
+  },
+  "SkuPartNumber": {
+    "Type": 1
+  },
+  "ActiveUnits": {
+    "Type": 1
+  },
+  "ConsumedUnits": {
+    "Type": 1
+  },
+  "LockedOutUnits": {
+    "Type": 1
+  },
+  "WarningUnits": {
+    "Type": 1
+  },
+  "NonTrialEntitlements": {
+    "Type": 1
+  },
+  "TrialEntitlements": {
+    "Type": 1
+  },
+  "ActiveUsers": {
+    "Type": 1
+  },
+  "LastUsedTime": {
+    "Type": 3
+  },
+  "Size": {
+    "Type": 1
+  },
+  "LastModifiedDate": {
+    "Type": 3
+  },
+  "NoOfSites": {
+    "Type": 1
+  },
+  "DesignerEnabled": {
+    "Type": 2
+  },
+  "Created": {
+    "Type": 3
+  },
+  "SubSitesCount": {
+    "Type": 1
+  },
+  "HasUniqueRoleAssignments": {
+    "Type": 2
+  },
+  "MajorVersionLimit": {
+    "Type": 1
+  },
+  "LastDeletedDate": {
+    "Type": 2
+  },
+  "EnableAttachments": {
+    "Type": 2
+  },
+  "EnableFolderCreation": {
+    "Type": 2
+  },
+  "EnableModeration": {
+    "Type": 2
+  },
+  "EnableVersioning": {
+    "Type": 2
+  },
+  "BaseType": {
+    "Type": 1
+  },
+  "BaseTemplate": {
+    "Type": 1
+  },
+  "ObjectType": {
+    "Type": 1
+  },
+  "UserType": {
+    "Type": 1
+  },
+  "IsHiddenInUI": {
+    "Type": 2
+  },
+  "IsDirectPermission": {
+    "Type": 2
+  },
+  "IsSiteAdmin": {
+    "Type": 2
+  },
+  "CanCurrentUserEditMembership": {
+    "Type": 2
+  },
+  "CanCurrentUserManageGroup": {
+    "Type": 2
+  },
+  "CanCurrentUserViewMembership": {
+    "Type": 2
+  },
+  "IsShareByEmailGuestUser": {
+    "Type": 2
+  },
+  "OwnerType": {
+    "Type": 1
+  },
+  "CreatedOn": {
+    "Type": 3
+  },
+  "LastModifiedOn": {
+    "Type": 3
+  },
+  "WorkflowEnabled": {
+    "Type": 2
+  },
+  "Version": {
+    "Type": 1
+  },
+  "IsCheckedoutToLocal": {
+    "Type": 2
+  },
+  "IsCurrentVersion": {
+    "Type": 2
+  },
+  "FileSize": {
+    "Type": 1
+  },
+  "DeletedDate": {
+    "Type": 3
+  },
+  "ItemState": {
+    "Type": 1
+  },
+  "ItemType": {
+    "Type": 1
+  },
+  "Access": {
+    "Type": 1
+  },
+  "SiteCollectionSize": {
+    "Type": 1
+  },
+  "TotalSize": {
+    "Type": 1
+  }
+}

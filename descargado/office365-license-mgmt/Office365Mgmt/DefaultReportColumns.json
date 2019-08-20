@@ -1,0 +1,580 @@
+﻿[
+    {
+        "ReportName": "All Users",
+        "Columns": "UserPrincipalName;User Name;Scope;Recipient Type;IsLicensed User;Applied Licenses"
+    },
+    {
+        "ReportName": "All Licensed Users",
+        "Columns": "User Name;UserPrincipalName;Applied Licenses;LicenseDetails;IsLicensed User"
+    },
+    {
+        "ReportName": "Unlicensed Users",
+        "Columns": "User Name;UserPrincipalName;Recipient Type"
+    },
+    {
+        "ReportName": "All Mailbox Details",
+        "Columns": "Mailbox Name;UserPrincipalName;Email Address;Other Email Addresses;Recipient Type"
+    },
+    {
+        "ReportName": "All Recipient Details",
+        "Columns": "Recipient Name;Email Address;Notes;Recipient Type;WhenCreated"
+    },
+    {
+        "ReportName": "Archive Mailbox",
+        "Columns": "Mailbox Name;ArchiveName;ArchiveQuota;ArchiveWarningQuota"
+    },
+    {
+        "ReportName": "Resource Mailbox",
+        "Columns": "Mailbox Name;UserPrincipalName;Recipient Type;Email Address"
+    },
+    {
+        "ReportName": "Users by Address Book Policy",
+        "Columns": "Mailbox Name;UserPrincipalName;AddressBookPolicy"
+    },
+    {
+        "ReportName": "Message Size Restrictions",
+        "Columns": "Mailbox Name;MaxSendSize;MaxReceiveSize;Recipient Limits"
+    },
+    {
+        "ReportName": "Message Delivery Restrictions",
+        "Columns": "Mailbox Name;AcceptMessagesOnlyFrom;RejectMessagesFrom"
+    },
+    {
+        "ReportName": "Send on Behalf Permissions",
+        "Columns": "Mailbox Name;UserPrincipalName;Send on Behalf;Recipient Type"
+    },
+    {
+        "ReportName": "Litigation Hold Mailbox",
+        "Columns": "Mailbox Name;UserPrincipalName;LitigationHoldDate;LitigationHoldOwner;LitigationHoldDuration"
+    },
+    {
+        "ReportName": "Deleted Users",
+        "Columns": "User Name;UserPrincipalName;Status;Deleted Time"
+    },
+    {
+        "ReportName": "Users not Logged in for last N days",
+        "Columns": "Mailbox Name;UserPrincipalName;Last Logon Time;Last Logoff Time"
+    },
+    {
+        "ReportName": "MailBox Logon Activity",
+        "Columns": "Mailbox Name;UserPrincipalName;Last Logon Time;Last Logoff Time"
+    },
+    {
+        "ReportName": "Top N Mailboxes based on Size",
+        "Columns": "Mailbox Name;Total Message Size;IssueWarningQuota;ProhibitSendQuota;ProhibitSendReceiveQuota"
+    },
+    {
+        "ReportName": "MailBox Size",
+        "Columns": "Mailbox Name;Total Message Count;Total Message Size;Recipient Type;IssueWarningQuota;ProhibitSendQuota;ProhibitSendReceiveQuota"
+    },
+    {
+        "ReportName": "Size of specific Mailbox",
+        "Columns": "Mailbox Name;Total Message Count;Recipient Type;IssueWarningQuota;ProhibitSendQuota;ProhibitSendReceiveQuota"
+    },
+    {
+        "ReportName": "Deleted Mail Size",
+        "Columns": "Mailbox Name;Total Message Size;Total Deleted Message Size"
+    },
+    {
+        "ReportName": "Deleted Mail Count",
+        "Columns": "Mailbox Name;Total Message Count;Total Deleted Message Count"
+    },
+    {
+        "ReportName": "Mailbox not Logged in for last N days",
+        "Columns": "Mailbox Name;UserPrincipalName;Last Logon Time;Last Logoff Time"
+    },
+    {
+        "ReportName": "MailBox Logon Activity-LogonReport",
+        "Columns": "Mailbox Name;UserPrincipalName;Last Logon Time;Last Logoff Time"
+    },
+    {
+        "ReportName": "All Users Logon Activity",
+        "Columns": "Mailbox Name;UserPrincipalName;LogonTime"
+    },
+    {
+        "ReportName": "Users not Logged in for last N days(All)",
+        "Columns": "Mailbox Name;UserPrincipalName;LogonTime"
+    },
+    {
+        "ReportName": "In Place Hold Mailbox",
+        "Columns": "Name;Source Mailboxes;ItemHoldPeriod;Status;NumberMailboxesToSearch;Percent Complete;Result Size"
+    },
+    {
+        "ReportName": "Inactive Mailbox",
+        "Columns": "Mailbox Name;UserPrincipalName;IsSoftDeletedByRemove;Deleted Time;LitigationHoldDate;LitigationHoldOwner;LitigationHoldDuration"
+    },
+    {
+        "ReportName": "Users by OWA Mailbox Policy",
+        "Columns": "Display Name;OWAEnabled;OwaMailboxPolicy;OWAforDevicesEnabled"
+    },
+    {
+        "ReportName": "Address Book Policies",
+        "Columns": "Name;Address Lists;Global Address List;RoomList;Offline Address Book;Last Modified"
+    },
+    {
+        "ReportName": "OWA Mailbox Policies",
+        "Columns": "Name;InstantMessagingEnabled;TextMessagingEnabled;ActiveSyncIntegrationEnabled;Last Modified"
+    },
+    {
+        "ReportName": "General MailBox Audit",
+        "Columns": "Message Time;Mailbox Name;Operation;Operation Result;Logon User Name;Item Subject"
+    },
+    {
+        "ReportName": "Created Messages",
+        "Columns": "Message Time;Mailbox Name;Operation Result;Logon User Name;Item Subject"
+    },
+    {
+        "ReportName": "Moved Messages",
+        "Columns": "Message Time;Mailbox Name;Operation Result;Logon User Name;Item Subject"
+    },
+    {
+        "ReportName": "Deleted Messages",
+        "Columns": "Message Time;Mailbox Name;Operation Result;Logon User Name;Item Subject"
+    },
+    {
+        "ReportName": "SendAs Messages",
+        "Columns": "Message Time;Mailbox Name;Operation;Operation Result;Logon User Name;Item Subject"
+    },
+    {
+        "ReportName": "SendOnBehalf Messages",
+        "Columns": "Message Time;Mailbox Name;Operation Result;Logon User Name;Item Subject"
+    },
+    {
+        "ReportName": "Deleted Messages",
+        "Columns": "Message Time;Mailbox Name;Operation Result;Logon User Name;Item Subject"
+    },
+    {
+        "ReportName": "Summary of Non-Owner Activity",
+        "Columns": "Message Time;Mailbox Name;Operation Result;Logon User Name;Item Subject"
+    },
+    {
+        "ReportName": "Distribution Groups",
+        "Columns": "Group Name;GroupType;Owners;Email Address;MaxSendSize;MaxReceiveSize"
+    },
+    {
+        "ReportName": "Distribution Groups-License",
+        "Columns": "Group Name;GroupType;Owners;Email Address;MaxSendSize;MaxReceiveSize"
+    },
+    {
+        "ReportName": "Distribution Group Members",
+        "Columns": "Group Name;Member Name;Email Address;RecipientType"
+    },
+    {
+        "ReportName": "Group Based Members",
+        "Columns": "Group Name;Member Name;Email Address;RecipientType"
+    },
+    {
+        "ReportName": "Office365 Groups",
+        "Columns": "Group Name;GroupType;IsMembershipDynamic;Connectors Enabled;Email Address;Owners"
+    },
+    {
+        "ReportName": "Public Office365 Groups",
+        "Columns": "Group Name;GroupType;Owners;Email Address;Other Email Addresses"
+    },
+    {
+        "ReportName": "Private Office365 Groups",
+        "Columns": "Group Name;GroupType;Owners;Email Address;Other Email Addresses"
+    },
+    {
+        "ReportName": "Connector Enabled Office 365 Groups",
+        "Columns": "Group Name;Connectors Enabled;Owners;Email Address;Other Email Addresses"
+    },
+    {
+        "ReportName": "Connector Disabled Office 365 Groups",
+        "Columns": "Group Name;Connectors Enabled;Owners;Email Address;Other Email Addresses"
+    },
+    {
+        "ReportName": "Office365 Groups-License",
+        "Columns": "Group Name;Connectors Enabled;Owners;Email Address;Other Email Addresses"
+    },
+    {
+        "ReportName": "Office365 Group Members",
+        "Columns": "Group Name;Member Name;Email Address;Recipient Type"
+    },
+    {
+       "ReportName": "Office365 Group Owners",
+        "Columns": "Group Name;Owner Name;Email Address;Recipient Type"
+    },
+    {
+        "ReportName": "Groups with Owner alone as Member",
+        "Columns": "Group Name;Owners;GroupType;Email Address"
+    },
+    {
+       "ReportName": "Office 365 Groups without Site Provisioned",
+        "Columns": "Group Name;Email Address;GroupType;SharePoint SiteUrl"
+    },
+    {
+       "ReportName": "Office 365 Groups with 'Allow external users in conversation' set",
+        "Columns": "Group Name;Grouptype;Owners"
+    },
+    {
+       "ReportName": "Recently Created Office365 Groups",
+        "Columns": "Group Name;Grouptype;Owners;WhenCreated"
+    },
+    {
+        "ReportName": "Dynamic Office 365 Groups",
+        "Columns": "Group Name;Group Type;IsMembershipDynamic;Connectors Enabled;Email Address;Managed By"
+    },
+    {
+        "ReportName": "Office 365 Groups Site Storage Quota",
+        "Columns": "GroupName;SiteUrl;Current Storage (MB);Storage Quota (GB);Storage Warning Level (GB)"
+    },
+    {
+        "ReportName": "OneDrive for Business Users",
+        "Columns": "UserAccount;SiteUrl;Current Storage (MB);Storage Quota (GB);Storage Warning Level (GB)"
+    },
+    {
+        "ReportName": "All Mobile Devices",
+        "Columns": "User Name;Device OS;Manufacture;Device Model;Device Mobile Operator;Identity"
+    },
+    {
+        "ReportName": "Mobile Devices by Access State",
+        "Columns": "User Name;Device OS;Manufacture;Device Model;Device Access State;Device Mobile Operator;Identity"
+    },
+    {
+        "ReportName": "Mobile Devices by Client",
+        "Columns": "User Name;Device OS;Manufacture;Device Model;Device Mobile Operator;Identity"
+    },
+    {
+        "ReportName": "Mobile Devices By OS",
+        "Columns": "User Name;Device OS;Manufacture;Device Model;Device Mobile Operator;Identity"
+    },
+    {
+        "ReportName": "Mobile Devices By Manufacture",
+        "Columns": "User Name;Device OS;Manufacture;Device Model;Device Mobile Operator;Identity"
+    },
+    {
+        "ReportName": "Inactive Mobile Devices",
+        "Columns": "User Name;Last Access Time;Device Name;Status;Identity"
+    },
+    {
+        "ReportName": "Mobile Device Policy Applied Details",
+        "Columns": "User Name;Applied Policy;Last Policy update;Last Access Attempt;Policy Status;Identity"
+    },
+    {
+        "ReportName": "Mobile Device Statistics",
+        "Columns": "User Name;Last Access Time;Device Name;Applied Policy;Last Policy update;Last Access Attempt;Status;Identity"
+    },
+    {
+        "ReportName": "Connection By Client Type",
+        "Columns": "Date;Client Type;Count"
+    },
+    {
+        "ReportName": "Spam Traffic Summary",
+        "Columns": "MsgDate;Malware Count;Direction"
+    },
+    {
+        "ReportName": "Malware Traffic Summary",
+        "Columns": "MsgDate;Malware Count;Direction"
+    },
+    {
+        "ReportName": "Top N Spam and Malware by Sender",
+        "Columns": "SenderAddress;Malware Count;Direction"
+    },
+    {
+        "ReportName": "Top N Spam and Malware by Recipient",
+        "Columns": "RecipientAddress;Malware Count;Direction"
+    },
+    {
+        "ReportName": "License Details",
+        "Columns": "License Name;ActiveUnits;Consumed Units;Locked Out Units;Warning Units;License Details;AccountSkuId"
+    },
+    {
+        "ReportName": "License Vs Usage Summary Report",
+        "Columns": "TenantGuid;Work load;Non-Trial Entitlements;Trial Entitlements;Active Users"
+    },
+    {
+        "ReportName": "Inactive Distribution Groups",
+        "Columns": "Group Name;GroupType;Email Address;Days Since Last Used"
+    },
+    {
+        "ReportName": "Inactive Office365 Groups",
+        "Columns": "Group Name;GroupType;Email Address;Days Since Last Used"
+    },
+    {
+        "ReportName": "Office 365 Video Channel Summary",
+        "Columns": "ChannelName;ChannelID;Owners;Editors;Viewers;Storage Quota (MB);Current Storage (MB);No Of Video"
+    },
+    {
+        "ReportName": "Office 365 Video Summary",
+        "Columns": "ChannelName;ChannelID;VideoID;Title;FileName;VideoDurationInSeconds;VideoProcessingStatus;VideoDownloadUrl;ViewCount"
+    },
+    {
+        "ReportName": "Office 365 Video Summary By Channel",
+        "Columns": "Title;ChannelName;VideoDurationInSeconds;VideoProcessingStatus;ViewCount"
+    },
+    {
+        "ReportName": "Failed Processed Video Summary",
+        "Columns": "Title;ChannelName;VideoProcessingStatus"
+    },
+    {
+        "ReportName": "Deleted Videos",
+        "Columns": "VideoName;ChannelName;DeletedBy;AuthorName;DeletedDate;ItemState"
+    },
+    {
+        "ReportName": "Office 365 Video Portal Info",
+        "Columns": "Name;NoOfChannel;ChannelAdmins;VideoAdmins"
+    },
+
+    // Sharepoint Reports //
+    {
+        "ReportName": "Permissions Matrix Report",
+        "Columns": "Site Collection;Address;Web Application;Database;Primary Administrator;Secondary Administrator"
+    },
+    {
+        "ReportName": "All Site Collections",
+        "Columns": "Site Collection;Address;Primary Administrator;Secondary Administrator"
+    },
+    {
+        "ReportName": "Site Collections Statistics",
+        "Columns": "Site Collection;Address;Total Size (MB);Total Sites;Last Modified Date"
+    },
+    {
+        "ReportName": "Site Collections With SharePoint Designer Disabled",
+        "Columns": "Site Collection;Address;Primary Administrator;Designer Enabled"
+    },
+    {
+        "ReportName": "Top Site Collections by Size",
+        "Columns": "Site Collection;Address;Total Size (MB);Total Sites;Last Modified Date"
+    },
+    {
+        "ReportName": "Farm Summary",
+        "Columns": "Web Application;Database;Total Sites"
+    },
+    {
+        "ReportName": "Web Application - Site Collection",
+        "Columns": "Site Collection;Address;Database;Last Modified Date"
+    },
+    {
+        "ReportName": "Primary Site Collection Administrator",
+        "Columns": "Site Collection;Address;Total Size (MB);Primary Administrator"
+    },
+    {
+        "ReportName": "Secondary Site Collection Administrator",
+        "Columns": "Site Collection;Address;Total Size (MB);Secondary Administrator"
+    },
+    {
+        "ReportName": "Web Application - Site Details",
+        "Columns": "Site Name;Address;Description;Created"
+    },
+    {
+        "ReportName": "All Sites",
+        "Columns": "Site Name;Address;Description;Created;Administrators"
+    },
+    {
+        "ReportName": "Site Statistics",
+        "Columns": "Site Name;Address;Sub-Sites Count;Last Modified Date"
+    },
+    {
+        "ReportName": "Sites With Explicit Permissions",
+        "Columns": "Site Name;Address;Sub-Sites Count;Last Modified Date"
+    },
+    {
+        "ReportName": "Unused Sites in last N days",
+        "Columns": "Site Name;Address;Sub-Sites Count;Last Modified Date"
+    },
+    {
+        "ReportName": "Top Level Sites",
+        "Columns": "Site Name;Address;Description;Created;Administrators"
+    },
+    {
+        "ReportName": "Sub Sites",
+        "Columns": "Site Name;Address;Description;Created;Administrators"
+    },
+    {
+        "ReportName": "All Lists",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Last Deleted Date;Created"
+    },
+    {
+        "ReportName": "Empty Lists",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Last Deleted Date;Created"
+    },
+    {
+        "ReportName": "List with Items",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Last Deleted Date;Created"
+    },
+    {
+        "ReportName": "Workflow Associated Lists",
+        "Columns": "Site;Name;Item Count;Associated Workflows;Last Modified Date"
+    },
+    {
+        "ReportName": "Version Enabled Lists",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Last Deleted Date;Created"
+    },
+    {
+        "ReportName": "Lists with versioning disabled",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Last Deleted Date;Created"
+    },
+    {
+        "ReportName": "Lists With Explicit Permissions",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Created"
+    },
+    {
+        "ReportName": "List Unchanged in last N days",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Created"
+    },
+    {
+        "ReportName": "Recently Created Lists",
+        "Columns": "Site;Name;Created"
+    },
+    {
+        "ReportName": "Lists with more than 5000 items",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Last Deleted Date;Created"
+    },
+    {
+        "ReportName": "All Libraries",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Last Deleted Date;Created"
+    },
+    {
+        "ReportName": "Empty Libraries",
+        "Columns": "Site;Name;Last Modified Date;Last Deleted Date;Created"
+    },
+    {
+        "ReportName": "Library with Items",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Last Deleted Date;Created"
+    },
+    {
+        "ReportName": "Workflow Associated Libraries",
+        "Columns": "Site;Name;Item Count;Associated Workflows;Last Modified Date"
+    },
+    {
+        "ReportName": "Version Enabled Libraries",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Last Deleted Date;Created"
+    },
+    {
+        "ReportName": "Libraries with versioning disabled",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Last Deleted Date;Created"
+    },
+    {
+        "ReportName": "Libraries With Explicit Permissions",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Created"
+    },
+    {
+        "ReportName": "List Unchanged in last N days",
+        "Columns": "Site;Name;Item Count;Last Modified Date;Created"
+    },
+    {
+        "ReportName": "Recently Created Libraries",
+        "Columns": "Site;Name;Created"
+    },
+    {
+        "ReportName": "Site Permissions",
+        "Columns": "Object Name;Url;User Title;User Type;Login Name;IsSiteAdmin;Roles"
+    },
+    {
+        "ReportName": "List Permissions",
+        "Columns": "Object Name;User Title;User Type;Login Name;IsSiteAdmin;Roles"
+    },
+    {
+        "ReportName": "Libary Permissions",
+        "Columns": "Object Name;User Title;User Type;Login Name;IsSiteAdmin;Roles"
+    },
+    {
+        "ReportName": "Documents With Explicit Permissions",
+        "Columns": "Object Name;Url;User Title;User Type;Login Name;IsSiteAdmin;Roles"
+    },
+    {
+        "ReportName": "Group Permissions",
+        "Columns": "Object Name;Url;User Title;User Type;Roles"
+    },
+    {
+        "ReportName": "Permissions Directly Assigned to Users",
+        "Columns": "Object Name;Url;User Title;User Type;Login Name;IsSiteAdmin;Roles"
+    },
+    {
+        "ReportName": "Site based Users",
+        "Columns": "Site Name;Site Url;User/Group Name;IsSiteAdmin"
+    },
+    {
+        "ReportName": "Mail Enabled Users",
+        "Columns": "Site Name;Site Url;User/Group Name;IsSiteAdmin;Email"
+    },
+    {
+        "ReportName": "Site based Admins",
+        "Columns": "Site Name;Site Url;User/Group Name"
+    },
+    {
+        "ReportName": "Site based Groups",
+        "Columns": "Site Name;Site Url;User/Group Name;Can Current User Edit Membership;Can Current User Manage Group"
+    },
+    {
+        "ReportName": "Sharepoint Group Members",
+        "Columns": "Site Name;Site Url;User/Group Name;Members"
+    },
+    {
+        "ReportName": "Sharepoint Group Owner Is User",
+        "Columns": "Site Name;User/Group Name;Owner;Can Current User Manage Group"
+    },
+    {
+        "ReportName": "Sharepoint Group Owner Is Group",
+        "Columns": "Site Name;User/Group Name;Owner;Can Current User Manage Group;Can Current User Edit Membership"
+    },
+    {
+        "ReportName": "Mail Request Enabled Groups",
+        "Columns": "Site Name;Site Url;User/Group Name;IsSiteAdmin;Email"
+    },
+    {
+        "ReportName": "Site Templates",
+        "Columns": "Site;Url;Name;Created On"
+    },
+    {
+        "ReportName": "List Templates",
+        "Columns": "Site;Url;Name;Created On"
+    },
+    {
+        "ReportName": "All Documents",
+        "Columns": "Site;Url;Name;Size (KB);Created On;Last Modified On"
+    },
+    {
+        "ReportName": "Current Documents",
+        "Columns": "Site;Url;Name;Size (KB);Created On;Last Modified On"
+    },
+    {
+        "ReportName": "Checked out Documents",
+        "Columns": "Site;Url;Name;Checkout User;Version"
+    },
+    {
+        "ReportName": "Checked in Documents",
+        "Columns": "Site;Url;Name;Version;Last CheckIn Comment;Last Modified On;ModifiedBy"
+    },
+    {
+        "ReportName": "Document Versions",
+        "Columns": "Site;Url;Name;IsCurrent Version;Version;Last CheckIn Comment"
+    },
+    {
+        "ReportName": "Documents Associated with Workflows",
+        "Columns": "Site;Url;Name;WorkFlow Name"
+    },
+    {
+        "ReportName": "Recently Created Documents",
+        "Columns": "Site;Url;Name;Size (KB);Created On;CreatedBy"
+    },
+    {
+        "ReportName": "Recently Modified Documents",
+        "Columns": "Site;Url;Name;Last Modified On;ModifiedBy"
+    },
+    {
+        "ReportName": "Documents larger than 50 MB",
+        "Columns": "Site;;Url;Name;Size (KB);Last Modified On;ModifiedBy"
+    },
+    {
+        "ReportName": "Documents with more than 10 versions",
+        "Columns": "Site;Url;Name;CreatedBy;Last Modified On;Version"
+    },
+    {
+        "ReportName": "Documents unchanged in last 6 months",
+        "Columns": "Site;Url;Name;CreatedBy;Last Modified On;Version"
+    },
+    {
+        "ReportName": "Recycle Bin Content",
+        "Columns": "Source;Deleted Item;ItemType;Deleted Date;DeletedBy"
+    },
+    {
+        "ReportName": "All Deleted Documents",
+        "Columns": "Source;Deleted Item;ItemType;Deleted Date;DeletedBy"
+    },
+    {
+        "ReportName": "Recently Deleted Documents",
+        "Columns": "Source;Deleted Item;ItemType;Deleted Date;DeletedBy"
+    }
+]
