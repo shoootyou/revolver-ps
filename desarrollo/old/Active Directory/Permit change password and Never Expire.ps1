@@ -1,0 +1,1 @@
+﻿Get-ADUser –Filter * -SearchBase "ou=Creatividad,dc=fasscorp,dc=com,dc=pe" -SearchScope subtree | Set-ADAccountControl -CannotChangePassword $false -PasswordNeverExpires $true

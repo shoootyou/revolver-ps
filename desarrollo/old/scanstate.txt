@@ -1,0 +1,1 @@
+scanstate.exe "C:\StateStore" /o /localonly /efs:copyraw /v:5 /c /l:scanstate.log /progress:scanstateprogress.log /i:migdocs.xml /i:migapp.xml /hardlink /nocompress
