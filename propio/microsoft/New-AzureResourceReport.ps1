@@ -1,22 +1,28 @@
 ﻿#region obtención de información base
 
 <#
+
+$ID_SUB = "c6496ad1-4a0d-4156-8647-1c256a62baad"
+
 Connect-AzAccount 
-Select-AzSubscription -Subscription c6496ad1-4a0d-4156-8647-1c256a62baad
+Select-AzSubscription -Subscription $ID_SUB
 
 $DB_AZ_RES = Get-AzResource | Select-Object * | Sort-Object Type
-$DB_AZ_SUB = Get-AzSubscription | Select-Object *
+$DB_AZ_SUB = Get-AzSubscription -SubscriptionId $ID_SUB | Select-Object *
 $DB_AZ_BCK_VLT = Get-AzRecoveryServicesVault
 $DB_AZ_VMS_LST = Get-AzVM | Sort-Object Name
 $DB_AZ_NSG_LST = Get-AzNetworkSecurityGroup
 $DB_AZ_STO_LST = Get-AzStorageAccount
 $DB_AZ_NET_LST = Get-AzVirtualNetwork
+$DB_AZ_PER_LST = $DB_AZ_NET_LST | Foreach-Object { Get-AzVirtualNetworkPeering -ResourceGroupName $_.ResourceGroupName -VirtualNetworkName $_.Name } 
 $DB_AZ_DSK_LST = Get-AzDisk
 $DB_AZ_SQL_LST = Get-AzSqlServer
 $DB_AZ_DBA_LST = $DB_AZ_SQL_LST | Foreach-Object {Get-AzSqlDatabase -ServerName $_.ServerName -ResourceGroupName $_.ResourceGroupName}
 
 #>
 #endregion obtención de información base
+
+
 
 #region Variables, argumentos and functions
 $date= Get-Date -format g
@@ -78,7 +84,7 @@ if($DB_AZ_BCK_VLT){
     }
 }
 $OBJ_TMP_03 = @()
-$OBJ_TMP_01.VirtualMachine | % {
+$OBJ_TMP_01.VirtualMachine | ForEach-Object {
     $OBJ_TMP_03 += $_.Substring($_.LastIndexOf("/")).Replace("/","")
 }
 
@@ -406,7 +412,7 @@ if($DB_AZ_SQL_LST){
         $INT_VAL_DBA = $true
         $HTML_SQL+="<tr" + $HTML_TMP_01
         $HTML_SQL+=">"
-        $INT_TMP_SQL_01 = Get-AzSqlDatabase -ServerName $INT_TMP_SQL.ServerName -ResourceGroupName $INT_TMP_SQL.ResourceGroupName | ? {$_.DatabaseName -ne 'master'}
+        $INT_TMP_SQL_01 = Get-AzSqlDatabase -ServerName $INT_TMP_SQL.ServerName -ResourceGroupName $INT_TMP_SQL.ResourceGroupName | Where-Object {$_.DatabaseName -ne 'master'}
         if($INT_TMP_SQL_01){
             foreach($INT_TMP_SQL_4 in $INT_TMP_SQL_01){
                 $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL.ResourceGroupName)</font></td>" 
@@ -503,7 +509,7 @@ foreach($INT_TMP_VNET in $DB_AZ_NET_LST){
 
     foreach($INT_TMP_VNET_01 in $INT_TMP_VNET.Subnets){
         $HTML_VNET+="<tr" + $HTML_TMP_01
-        Remove-Variable INT_TMP_VNET_02
+        Remove-Variable INT_TMP_VNET_02 -ErrorAction SilentlyContinue
         $INT_TMP_VNET.DhcpOptions.DnsServers | Foreach-Object { $INT_TMP_VNET_02 += $_ + "<br />"}
 
         $HTML_VNET+=">"
@@ -511,8 +517,13 @@ foreach($INT_TMP_VNET in $DB_AZ_NET_LST){
         $HTML_VNET+="<td align=""center""><font color=""#000000"">$($INT_TMP_VNET.Name)</font></td>" 
         $HTML_VNET+="<td align=""center""><font color=""#000000"">$($INT_TMP_VNET.Location)</font></td>" 
         $HTML_VNET+="<td align=""center""><font color=""#000000"">$($INT_TMP_VNET.ProvisioningState)</font></td>" 
-        $HTML_VNET+="<td align=""center""><font color=""#000000"">$($INT_TMP_VNET.AddressSpace.AddressPrefixes)</font></td>" 
-        $HTML_VNET+="<td align=""center""><font color=""#000000"">$($INT_TMP_VNET_02)</font></td>" 
+        $HTML_VNET+="<td align=""center""><font color=""#000000"">$($INT_TMP_VNET.AddressSpace.AddressPrefixes)</font></td>"
+        if($INT_TMP_VNET_02){
+            $HTML_VNET+="<td align=""center""><font color=""#000000"">$($INT_TMP_VNET_02)</font></td>" 
+        }
+        else{
+            $HTML_VNET+="<td align=""center""><font color=""#000000"">Azure Provided</font></td>" 
+        }
         $HTML_VNET+="<td align=""center""><font color=""#000000"">$($INT_TMP_VNET.EnableDdosProtection)</font></td>" 
         $HTML_VNET+="<td align=""center""><font color=""#000000"">$($INT_TMP_VNET.DdosProtectionPlan)</font></td>" 
         $HTML_VNET+="<td align=""center""><font color=""#000000"">$($INT_TMP_VNET_01.Name)</font></td>"
