@@ -1,2 +1,0 @@
-Set-PSDebug -trace 2
-Set-ExecutionPolicy Unrestricted 
