@@ -2,6 +2,7 @@
 
 <#
 Connect-AzAccount 
+$DBG_OP = $false
 
 #>
 
@@ -27,8 +28,7 @@ foreach($SUB in $COR_AZ_SUB){
 
     #region Variables, argumentos and functions
     $date= Get-Date -format g
-    $version = "5.2" #<<<<<<CHANGE THIS ANYTIME MODIFIED!
-    $WarningColor = "#fff200"
+    $version = "5.5" #<<<<<<CHANGE THIS ANYTIME MODIFIED!
     $HTMLHeader = $null
     $HTMLMiddle = $null
     $HTML_Backup = $null
@@ -348,16 +348,22 @@ foreach($SUB in $COR_AZ_SUB){
             }
             else{
                 $HTML_NSG+="<td align=""center""><font color=""#000000"">$()</font></td>" 
+                $HTML_NSG+="<td align=""center""><font color=""#000000"">$()</font></td>" 
             }
-            $HTML_NSG+="<td align=""center""><font color=""#000000"">$($INT_TMP_NSG.Subnets)</font></td></tr>" 
-            
-            if($INT_TMP_NSG_01.DestinationPortRange -eq '*' -and $INT_TMP_NSG_01.SourceAddressPrefix -eq '*' -and $INT_TMP_NSG_01.Access -eq "Allow" ){
+            if($INT_TMP_NSG.Subnets.Id){
+                $HTML_NSG+="<td align=""center""><font color=""#000000"">$(($INT_TMP_NSG.Subnets.Id).Substring(($INT_TMP_NSG.Subnets.Id).LastIndexOf("/")+1))</font></td></tr>" 
+            }
+            else{
+                $HTML_NSG+="<td align=""center""><font color=""#000000"">$()</font></td>" 
+            }
+
+            if($INT_TMP_NSG_01.DestinationPortRange -eq '*' -and $INT_TMP_NSG_01.SourceAddressPrefix -eq '*' -and $INT_TMP_NSG_01.Access -eq "Allow" -and $INT_TMP_NSG_01.Direction -eq "Inbound" ){
                 $INT_CNT_PAD_ALL++
             }
-            elseif($INT_TMP_NSG_01.DestinationPortRange -eq '*' -and $INT_TMP_NSG_01.Access -eq "Allow"){
+            elseif($INT_TMP_NSG_01.DestinationPortRange -eq '*' -and $INT_TMP_NSG_01.Access -eq "Allow" -and $INT_TMP_NSG_01.Direction -eq "Inbound"){
                 $INT_CNT_PRT_ALL++
             }
-            elseif($INT_TMP_NSG_01.SourceAddressPrefix -eq '*'  -and $INT_TMP_NSG_01.Access -eq "Allow"){
+            elseif($INT_TMP_NSG_01.SourceAddressPrefix -eq '*'  -and $INT_TMP_NSG_01.Access -eq "Allow" -and $INT_TMP_NSG_01.Direction -eq "Inbound"){
                 $INT_CNT_ADD_ALL++
             }
             $INT_CNT_RUL_ALL++
@@ -831,7 +837,7 @@ foreach($SUB in $COR_AZ_SUB){
     $HTMLMiddle+="</tr>"
 
     $HTMLMiddle+="<tr align=""center"" bgcolor=""#8E1275"">"
-    $HTMLMiddle+="<td align=""center""><font color=""#FFFFFF""># de reglas comprometidas</font></td>" 
+    $HTMLMiddle+="<td align=""center""><font color=""#FFFFFF""># de reglas posiblemente comprometidas</font></td>" 
     $HTMLMiddle+="<td align=""center""><font color=""#FFFFFF"">$($INT_CNT_PRT_ALL + $INT_CNT_ADD_ALL + $INT_CNT_PAD_ALL)</font></td>" 
     $HTMLMiddle+="</tr>"
 
@@ -986,4 +992,8 @@ foreach($SUB in $COR_AZ_SUB){
     [System.Web.HttpUtility]::HtmlDecode($HTMLFile) | Out-File $PRN_PAT 
 
     #endregion finalizacion y cierre del archivo
+
+    if($DBG_OP){
+        pause
+    }
 }
