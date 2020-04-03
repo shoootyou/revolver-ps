@@ -23,6 +23,7 @@ foreach($SUB in $COR_AZ_SUB){
     $DB_AZ_DSK_LST = Get-AzDisk
     $DB_AZ_SQL_LST = Get-AzSqlServer
     $DB_AZ_DBA_LST = $DB_AZ_SQL_LST | Foreach-Object {Get-AzSqlDatabase -ServerName $_.ServerName -ResourceGroupName $_.ResourceGroupName}
+    $DB_AZ_IAM_LST = Get-AzRoleAssignment
 
     #endregion obtención de información base
 
@@ -32,8 +33,10 @@ foreach($SUB in $COR_AZ_SUB){
     $HTMLHeader = $null
     $HTMLMiddle = $null
     $HTML_Backup = $null
+    $HTML_Disk = $null
     $HTML_VNET = $null
     $HTML_SQL = $null
+    $HTML_RBAC = $null
     $HTML_NSG = $null
     $HTML_Storage = $null
     $HTML_Details = $null
@@ -271,6 +274,82 @@ foreach($SUB in $COR_AZ_SUB){
 
     #endregion de Storage
 
+    #region de Disk
+
+    $HTML_Disk+="<input class=""toggle-box"" id=""identifier-disk"" type=""checkbox"" name=""grouped""><label for=""identifier-disk"">Azure Disk</label><div>"
+
+    $HTML_Disk+="<table border=""0"" width=""100%"" cellpadding=""4""  style=""font-size:8pt;font-family:Segoe UI,Frutiger,Frutiger Linotype,Dejavu Sans,Helvetica Neue,Arial,sans-serif;""><tr bgcolor=""#000099"">"
+    $HTML_Disk+= "<th colspan= ""14"" ><font color=""#FFFFFF"">Detalle de Azure Disks</font></th></tr>"
+    $HTML_Disk+="<tr bgcolor=""#0000FF"">"
+    $HTML_Disk+="<th align=""center""><font color=""#FFFFFF"">Grupo de Recursos</font></th>"
+    $HTML_Disk+="<th align=""center""><font color=""#FFFFFF"">Nombre de Disco</font></th>"
+    $HTML_Disk+="<th align=""center""><font color=""#FFFFFF"">Ubicación</font></th>"
+    $HTML_Disk+="<th align=""center""><font color=""#FFFFFF"">SKU</font></th>"
+    $HTML_Disk+="<th align=""center""><font color=""#FFFFFF"">Tipo de SO</font></th>"
+    $HTML_Disk+="<th align=""center""><font color=""#FFFFFF"">Tamaño en GB</font></th>"
+    $HTML_Disk+="<th align=""center""><font color=""#FFFFFF"">R/W IOPS</font></th>"
+    $HTML_Disk+="<th align=""center""><font color=""#FFFFFF"">R/W MBps</font></th>"
+    $HTML_Disk+="<th align=""center""><font color=""#FFFFFF"">Estado</font></th>"
+    $HTML_Disk+="<th align=""center""><font color=""#FFFFFF"">Cifrado</font></th>"
+    $HTML_Disk+="<th align=""center""><font color=""#FFFFFF"">VM Referente</font></th>"
+    $HTML_Disk+="</tr>"
+    $HTML_Disk+="<tr align=""center"" bgcolor=""#dddddd"">"
+
+    $INT_CNT_ENC_ONN = 0
+    $INT_CNT_ENC_OFF = 0
+    $INT_ALT_RW = 0
+
+    foreach($INT_TMP_DSK in $DB_AZ_DSK_LST){
+        $HTML_Disk+="<tr"
+        #region linea intercaladas
+        if ($INT_ALT_RW)
+        {
+            $HTML_Disk+=" style=""background-color:#dddddd"""
+            $INT_ALT_RW=0
+        } else
+        {
+            $INT_ALT_RW=1
+        }
+        #endregion linea intercaladas
+
+        $HTML_Disk+=">"
+        $HTML_Disk+="<td align=""center""><font color=""#000000"">$($INT_TMP_DSK.ResourceGroupName)</font></td>" 
+        $HTML_Disk+="<td align=""center""><font color=""#000000"">$($INT_TMP_DSK.Name)</font></td>" 
+        $HTML_Disk+="<td align=""center""><font color=""#000000"">$($INT_TMP_DSK.Location)</font></td>" 
+        $HTML_Disk+="<td align=""center""><font color=""#000000"">$($INT_TMP_DSK.Sku.Name)</font></td>" 
+        $HTML_Disk+="<td align=""center""><font color=""#000000"">$($INT_TMP_DSK.OsType)</font></td>"
+        $HTML_Disk+="<td align=""center""><font color=""#000000"">$($INT_TMP_DSK.DiskSizeGB)</font></td>"
+        $HTML_Disk+="<td align=""center""><font color=""#000000"">$($INT_TMP_DSK.DiskIOPSReadWrite)</font></td>"
+        $HTML_Disk+="<td align=""center""><font color=""#000000"">$($INT_TMP_DSK.DiskMBpsReadWrite)</font></td>"
+        
+        if($INT_TMP_DSK.DiskState -eq "Attached"){
+            $HTML_Disk+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">$($INT_TMP_DSK.DiskState)</font></td>"
+        }
+        else{
+            $HTML_Disk+="<td align=""center"" bgcolor=""#ff0000""><font color=""#000000"">$($INT_TMP_DSK.DiskState)</font></td>"
+        }
+        $HTML_Disk+="<td align=""center""><font color=""#000000"">$($INT_TMP_DSK.Encryption.Type)</font></td>"
+        if($INT_TMP_DSK.ManagedBy){
+            $HTML_Disk+="<td align=""center""><font color=""#000000"">$(($INT_TMP_DSK.ManagedBy).Substring(($INT_TMP_DSK.ManagedBy).LastIndexOf("/")+1))</font></td>"
+        }
+        else{
+            $HTML_SQL+="<td align=""center""><font color=""#000000"">$()</font></td>" 
+        }
+        if($INT_TMP_DSK.Encryption.Type){
+            $INT_CNT_ENC_ONN++
+        }
+        else{
+            $INT_CNT_ENC_OFF++
+        }
+    }
+    $HTML_Disk+="</table>"
+
+    $HTML_Disk+="</div>"
+
+    $HTML_Disk+= "<br />"
+
+    #endregion de Disk
+
     #region de NSG
 
     $HTML_NSG+="<input class=""toggle-box"" id=""identifier-NSG"" type=""checkbox"" name=""grouped""><label for=""identifier-NSG"">Network Security Groups (NSG)</label><div>"
@@ -336,8 +415,9 @@ foreach($SUB in $COR_AZ_SUB){
             $HTML_NSG+="<td align=""center""><font color=""#000000"">$($INT_TMP_NSG_01.DestinationPortRange)</font></td>"
             $HTML_NSG+="<td align=""center""><font color=""#000000"">$($INT_TMP_NSG_01.SourceAddressPrefix)</font></td>"
             $HTML_NSG+="<td align=""center""><font color=""#000000"">$($INT_TMP_NSG_01.DestinationAddressPrefix)</font></td>"
+
             if($INT_TMP_NSG.NetworkInterfaces.id){
-                $HTML_NSG+="<td align=""center""><font color=""#000000"">$(($INT_TMP_NSG.NetworkInterfaces.id).Substring(($INT_TMP_NSG.NetworkInterfaces.id).LastIndexOf("/")))</font></td>"
+                $HTML_NSG+="<td align=""center""><font color=""#000000"">$(($INT_TMP_NSG.NetworkInterfaces.id).Substring(($INT_TMP_NSG.NetworkInterfaces.id).LastIndexOf("/")+1))</font></td>"
                 $INT_TMP_NSG_02 = (Get-AzNetworkInterface -ResourceId $INT_TMP_NSG.NetworkInterfaces.id).VirtualMachine
                 if($INT_TMP_NSG_02){
                     $HTML_NSG+="<td align=""center""><font color=""#000000"">$(($INT_TMP_NSG_02.id).Substring(($INT_TMP_NSG_02.id).LastIndexOf("/")))</font></td>" 
@@ -350,6 +430,7 @@ foreach($SUB in $COR_AZ_SUB){
                 $HTML_NSG+="<td align=""center""><font color=""#000000"">$()</font></td>" 
                 $HTML_NSG+="<td align=""center""><font color=""#000000"">$()</font></td>" 
             }
+
             if($INT_TMP_NSG.Subnets.Id){
                 $HTML_NSG+="<td align=""center""><font color=""#000000"">$(($INT_TMP_NSG.Subnets.Id).Substring(($INT_TMP_NSG.Subnets.Id).LastIndexOf("/")+1))</font></td></tr>" 
             }
@@ -378,6 +459,77 @@ foreach($SUB in $COR_AZ_SUB){
 
     #endregion de NSG
 
+    #region de RBAC
+
+    $HTML_RBAC+="<input class=""toggle-box"" id=""identifier-rbac"" type=""checkbox"" name=""grouped""><label for=""identifier-rbac"">Azure RBAC</label><div>"
+
+    $HTML_RBAC+="<table border=""0"" width=""100%"" cellpadding=""4""  style=""font-size:8pt;font-family:Segoe UI,Frutiger,Frutiger Linotype,Dejavu Sans,Helvetica Neue,Arial,sans-serif;""><tr bgcolor=""#000099"">"
+    $HTML_RBAC+= "<th colspan= ""7"" ><font color=""#FFFFFF"">Detalle de permisos en Azure</font></th></tr>"
+    $HTML_RBAC+="<tr bgcolor=""#0000FF"">"
+    $HTML_RBAC+="<th align=""center""><font color=""#FFFFFF"">Display Name</font></th>"
+    $HTML_RBAC+="<th align=""center""><font color=""#FFFFFF"">Sign In Name</font></th>"
+    $HTML_RBAC+="<th align=""center""><font color=""#FFFFFF"">Azure AD</font></th>"
+    $HTML_RBAC+="<th align=""center""><font color=""#FFFFFF"">Tipo de usuario</font></th>"
+    $HTML_RBAC+="<th align=""center""><font color=""#FFFFFF"">Alcance</font></th>"
+    $HTML_RBAC+="<th align=""center""><font color=""#FFFFFF"">Role</font></th>"
+    $HTML_RBAC+="<th align=""center""><font color=""#FFFFFF"">¿Puede delegar?</font></th>"
+    $HTML_RBAC+="</tr>"
+    $HTML_RBAC+="<tr align=""center"" bgcolor=""#dddddd"">"
+
+    $INT_ALT_RW = 0
+
+    foreach($INT_TMP_IAM in $DB_AZ_IAM_LST){
+        $HTML_RBAC+="<tr"
+        #region linea intercaladas
+        if ($INT_ALT_RW)
+        {
+            $HTML_RBAC+=" style=""background-color:#dddddd"""
+            $INT_ALT_RW=0
+        } else
+        {
+            $INT_ALT_RW=1
+        }
+        #endregion linea intercaladas
+
+        $HTML_RBAC+=">"
+        $HTML_RBAC+="<td align=""center""><font color=""#000000"">$($INT_TMP_IAM.DisplayName)</font></td>" 
+        $HTML_RBAC+="<td align=""center""><font color=""#000000"">$($INT_TMP_IAM.SignInName)</font></td>"
+        if($INT_TMP_IAM.SignInName){
+        
+            if($INT_TMP_IAM.SignInName.IndexOf("#EXT") -gt 0){
+                $HTML_RBAC+="<td align=""center""><font color=""#000000"">Guest User</font></td>"
+            }
+            else{
+                $HTML_RBAC+="<td align=""center""><font color=""#000000"">Local User</font></td>"
+            }
+        }
+        else{
+            $HTML_RBAC+="<td align=""center""><font color=""#000000"">$()</font></td>" 
+        }
+
+        $HTML_RBAC+="<td align=""center""><font color=""#000000"">$($INT_TMP_IAM.ObjectType)</font></td>" 
+        $HTML_RBAC+="<td align=""center""><font color=""#000000"">$($INT_TMP_IAM.Scope)</font></td>"
+        if($INT_TMP_IAM.RoleDefinitionName -eq "Owner"){
+            $HTML_RBAC+="<td align=""center"" bgcolor=""#FFFF00""><font color=""#000000"">$($INT_TMP_IAM.RoleDefinitionName)</font></td>"        
+        }
+        else{
+            $HTML_RBAC+="<td align=""center""><font color=""#000000"">$($INT_TMP_IAM.RoleDefinitionName)</font></td>"        
+        }
+        if($INT_TMP_IAM.CanDelegate -eq "False"){
+            $HTML_RBAC+="<td align=""center"" bgcolor=""#ff0000""><font color=""#000000"">$($INT_TMP_IAM.CanDelegate)</font></td></tr>"
+        }
+        else{
+            $HTML_RBAC+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">$($INT_TMP_IAM.CanDelegate)</font></td></tr>"
+        }
+    }
+    $HTML_RBAC+="</table>"
+
+    $HTML_RBAC+="</div>"
+
+    $HTML_RBAC+= "<br />"
+
+    #endregion de RBAC
+
     if($DB_AZ_SQL_LST){
         #region de SQL
 
@@ -386,7 +538,7 @@ foreach($SUB in $COR_AZ_SUB){
         #region de SQL Servers
 
         $HTML_SQL+="<table border=""0"" width=""100%"" cellpadding=""4""  style=""font-size:8pt;font-family:Segoe UI,Frutiger,Frutiger Linotype,Dejavu Sans,Helvetica Neue,Arial,sans-serif;""><tr bgcolor=""#000099"">"
-        $HTML_SQL+= "<th colspan= ""14"" ><font color=""#FFFFFF"">Detalle de Azure SQL Servers (SQL)</font></th></tr>"
+        $HTML_SQL+= "<th colspan= ""19"" ><font color=""#FFFFFF"">Detalle de Azure SQL Servers (SQL)</font></th></tr>"
         $HTML_SQL+="<tr bgcolor=""#0000FF"">"
         $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">Grupo de Recursos</font></th>"
         $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">Nombre de SQL Server</font></th>"
@@ -394,9 +546,14 @@ foreach($SUB in $COR_AZ_SUB){
         $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">Usuario Administrador</font></th>"
         $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">Versión de SQL</font></th>"
         $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">SQL FQDN</font></th>"
+        $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">SQL Server Audit</font></th>"
         $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">Nombre de BD</font></th>"
         $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">Edición</font></th>"
+        $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">SKU</font></th>"
+        $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">ElasticPoolName</font></th>"
         $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">Collation</font></th>"
+        $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">SQL TDE</font></th>"
+        $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">SQL Database Audit</font></th>"
         $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">Tamaño máximo (GB)</font></th>"
         $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">Estado</font></th>"
         $HTML_SQL+="<th align=""center""><font color=""#FFFFFF"">Fecha de creación</font></th>"
@@ -421,26 +578,81 @@ foreach($SUB in $COR_AZ_SUB){
                 $INT_ALT_RW=1
             }
             #endregion linea intercaladas
-            $INT_VAL_DBA = $true
             $HTML_SQL+="<tr" + $HTML_TMP_01
             $HTML_SQL+=">"
             $INT_TMP_SQL_01 = Get-AzSqlDatabase -ServerName $INT_TMP_SQL.ServerName -ResourceGroupName $INT_TMP_SQL.ResourceGroupName | Where-Object {$_.DatabaseName -ne 'master'}
+            $INT_TMP_SQL_02 = Get-AzSqlServerAudit -ResourceGroupName $INT_TMP_SQL.ResourceGroupName -ServerName $INT_TMP_SQL.ServerName
             if($INT_TMP_SQL_01){
                 foreach($INT_TMP_SQL_4 in $INT_TMP_SQL_01){
+                    $INT_TMP_SQL_5 =  Get-AzSqlDatabaseTransparentDataEncryption -DatabaseName $INT_TMP_SQL_4.DatabaseName -ServerName $INT_TMP_SQL.ServerName -ResourceGroupName $INT_TMP_SQL.ResourceGroupName
+                    $INT_TMP_SQL_6 =  Get-AzSqlDatabaseAudit -DatabaseName $INT_TMP_SQL_4.DatabaseName -ServerName $INT_TMP_SQL_4.ServerName -ResourceGroupName $INT_TMP_SQL_4.ResourceGroupName
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL.ResourceGroupName)</font></td>" 
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL.ServerName)</font></td>" 
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL.Location)</font></td>" 
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL.SqlAdministratorLogin)</font></td>" 
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL.ServerVersion)</font></td>" 
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL.FullyQualifiedDomainName)</font></td>" 
+                    if($INT_TMP_SQL_02.BlobStorageTargetState -eq "Disabled" -and $INT_TMP_SQL_02.EventHubTargetState -eq "Disabled" -and $INT_TMP_SQL_02.LogAnalyticsTargetState -eq "Disabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#ff0000""><font color=""#000000"">Fully Disabled</font></td>" 
+                    }
+                    elseif($INT_TMP_SQL_02.BlobStorageTargetState -eq "Enabled" -and $INT_TMP_SQL_02.EventHubTargetState -eq "Enabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">Blob & EventHub</font></td>"
+                    }
+                    elseif($INT_TMP_SQL_02.EventHubTargetState -eq "Enabled" -and $INT_TMP_SQL_02.LogAnalyticsTargetState -eq "Enabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">EventHub & Logs Analytics</font></td>"
+                    }
+                    elseif($INT_TMP_SQL_02.BlobStorageTargetState -eq "Enabled" -and $INT_TMP_SQL_02.LogAnalyticsTargetState -eq "Enabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">Blob & Logs Analytics</font></td>"
+                    }
+                    elseif($INT_TMP_SQL_02.BlobStorageTargetState -eq "Enabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">Blob</font></td>"
+                    }
+                    elseif($INT_TMP_SQL_02.EventHubTargetState -eq "Enabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">EventHub</font></td>"
+                    }
+                    else{
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">Logs Analytics</font></td>"
+                    }
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL_4.DatabaseName)</font></td>" 
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL_4.Edition)</font></td>" 
+                    $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL_4.SkuName)</font></td>"
+                    $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL_4.ElasticPoolName)</font></td>" 
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL_4.CollationName)</font></td>" 
+
+                    if($INT_TMP_SQL_5.State -eq "Enabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">$($INT_TMP_SQL_5.State)</font></td>"
+                    }
+                    else{
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#ff0000""><font color=""#000000"">$($INT_TMP_SQL_5.State)</font></td>"
+                    }
+
+                    if($INT_TMP_SQL_6.BlobStorageTargetState -eq "Disabled" -and $INT_TMP_SQL_6.EventHubTargetState -eq "Disabled" -and $INT_TMP_SQL_6.LogAnalyticsTargetState -eq "Disabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#ff0000""><font color=""#000000"">Fully Disabled</font></td>" 
+                    }
+                    elseif($INT_TMP_SQL_6.BlobStorageTargetState -eq "Enabled" -and $INT_TMP_SQL_6.EventHubTargetState -eq "Enabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">Blob & EventHub</font></td>"
+                    }
+                    elseif($INT_TMP_SQL_6.EventHubTargetState -eq "Enabled" -and $INT_TMP_SQL_6.LogAnalyticsTargetState -eq "Enabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">EventHub & Logs Analytics</font></td>"
+                    }
+                    elseif($INT_TMP_SQL_6.BlobStorageTargetState -eq "Enabled" -and $INT_TMP_SQL_6.LogAnalyticsTargetState -eq "Enabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">Blob & Logs Analytics</font></td>"
+                    }
+                    elseif($INT_TMP_SQL_6.BlobStorageTargetState -eq "Enabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">Blob</font></td>"
+                    }
+                    elseif($INT_TMP_SQL_6.EventHubTargetState -eq "Enabled"){
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">EventHub</font></td>"
+                    }
+                    else{
+                        $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">Logs Analytics</font></td>"
+                    }
+
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL_4.MaxSizeBytes/1GB)</font></td>" 
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL_4.Status)</font></td>" 
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL_4.CreationDate)</font></td>" 
                     $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL_4.ZoneRedundant)</font></td>" 
-                    $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL_4.Capacity)</font></td>"
+                    $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL_4.Capacity)</font></td></tr>"
                     $INT_CNT_DBA_ALL++
                 }
             }
@@ -451,6 +663,30 @@ foreach($SUB in $COR_AZ_SUB){
                 $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL.SqlAdministratorLogin)</font></td>" 
                 $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL.ServerVersion)</font></td>" 
                 $HTML_SQL+="<td align=""center""><font color=""#000000"">$($INT_TMP_SQL.FullyQualifiedDomainName)</font></td>" 
+                if($INT_TMP_SQL_02.BlobStorageTargetState -eq "Disabled" -and $INT_TMP_SQL_02.EventHubTargetState -eq "Disabled" -and $INT_TMP_SQL_02.LogAnalyticsTargetState -eq "Disabled"){
+                    $HTML_SQL+="<td align=""center"" bgcolor=""#ff0000""><font color=""#000000"">Fully Disabled</font></td>" 
+                }
+                elseif($INT_TMP_SQL_02.BlobStorageTargetState -eq "Enabled" -and $INT_TMP_SQL_02.EventHubTargetState -eq "Enabled"){
+                    $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">Blob & EventHub</font></td>"
+                }
+                elseif($INT_TMP_SQL_02.EventHubTargetState -eq "Enabled" -and $INT_TMP_SQL_02.LogAnalyticsTargetState -eq "Enabled"){
+                    $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">EventHub & Logs Analytics</font></td>"
+                }
+                elseif($INT_TMP_SQL_02.BlobStorageTargetState -eq "Enabled" -and $INT_TMP_SQL_02.LogAnalyticsTargetState -eq "Enabled"){
+                    $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">Blob & Logs Analytics</font></td>"
+                }
+                elseif($INT_TMP_SQL_02.BlobStorageTargetState -eq "Enabled"){
+                    $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">Blob</font></td>"
+                }
+                elseif($INT_TMP_SQL_02.EventHubTargetState -eq "Enabled"){
+                    $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">EventHub</font></td>"
+                }
+                else{
+                    $HTML_SQL+="<td align=""center"" bgcolor=""#008000""><font color=""#000000"">Logs Analytics</font></td>"
+                } 
+                $HTML_SQL+="<td align=""center""><font color=""#000000"">$()</font></td>" 
+                $HTML_SQL+="<td align=""center""><font color=""#000000"">$()</font></td>" 
+                $HTML_SQL+="<td align=""center""><font color=""#000000"">$()</font></td>" 
                 $HTML_SQL+="<td align=""center""><font color=""#000000"">$()</font></td>" 
                 $HTML_SQL+="<td align=""center""><font color=""#000000"">$()</font></td>" 
                 $HTML_SQL+="<td align=""center""><font color=""#000000"">$()</font></td>" 
@@ -459,6 +695,7 @@ foreach($SUB in $COR_AZ_SUB){
                 $HTML_SQL+="<td align=""center""><font color=""#000000"">$()</font></td>" 
                 $HTML_SQL+="<td align=""center""><font color=""#000000"">$()</font></td>" 
                 $HTML_SQL+="<td align=""center""><font color=""#000000"">$()</font></td>"
+                $HTML_SQL+="<td align=""center""><font color=""#000000"">$()</font></td></tr>"
             }
 
 
@@ -466,15 +703,12 @@ foreach($SUB in $COR_AZ_SUB){
             }
 
 
-        $HTML_SQL+="</tr></table>"
+        $HTML_SQL+="</table>"
         $HTML_SQL+= "<br />"
 
         #endregion de SQL Servers
 
-
-
         $HTML_SQL+="</div>"
-
         $HTML_SQL+= "<br />"
 
         #endregion de SQL
@@ -986,7 +1220,7 @@ foreach($SUB in $COR_AZ_SUB){
     #region finalizacion y cierre del archivo
 
     $HTMLEnd = "</body></html>"
-    $HTMLFile = $HTMLHeader + $HTMLMiddle + $HTML_Backup + $HTML_Storage + $HTML_VNET + $HTML_NSG + $HTML_SQL + $HTML_Details + $HTMLEnd
+    $HTMLFile = $HTMLHeader + $HTMLMiddle + $HTML_Backup + $HTML_RBAC + $HTML_Storage + $HTML_Disk + $HTML_VNET + $HTML_NSG + $HTML_SQL + $HTML_Details + $HTMLEnd
     Add-Type -AssemblyName System.Web
     $PRN_PAT = $env:USERPROFILE + "\OneDrive\GitHub\revolver-ps\propio\microsoft\reports\" + (get-Date).ToShortDateString().Replace("/","") + (get-Date).ToShortTimeString().Replace(":","").Replace(" ","") + "-" + ($SUB.Name).Trim() + "-AzureResourcesReport.html"
     [System.Web.HttpUtility]::HtmlDecode($HTMLFile) | Out-File $PRN_PAT 

@@ -2,7 +2,7 @@
 
 $CN_GPR = 1
 $DB_USR = Get-Mailbox -ResultSize Unlimited | Select *
-$OB_OUT = @()
+    $OB_OUT = @()
 
 foreach($USR in $DB_USR){
     Write-Progress -Activity “Revisando Información de usuarios" -status “Revisando el usuario $PR_BAR” -percentComplete ($CN_GPR / $DB_USR.count*100) -Id 500
