@@ -1,6 +1,7 @@
 ﻿$GRID_OUT = @()
 $DB_ACCO = Get-MSOLUser | Select DisplayName,UserPrincipalName,Licenses 
 
+
 foreach($INT_ACC in $DB_ACCO){
         foreach($INT_LIC in $INT_ACC.Licenses){
             $GRID_TMP = New-Object PsObject 
