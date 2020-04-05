@@ -18,7 +18,7 @@ Write-Host "Finalizado snapshot SO"
 #Snap Data Disk
 $vmdataDisk = (Get-AzureRmVM -ResourceGroupName $resourceGroupName -Name $vmName).StorageProfile.DataDisks
 foreach($diskData in $vmdataDisk){
-    Write-Progress -Id 1 -Activity "Generando snapshots" -status ("Trabajando en " + $diskData.Name) -percentComplete ($i / $vmdataDisk.count*100)
+    Write-Progress -Id 1 -Activity "Generando snapshots" -status ("Trabajando en " + $diskData.Name) -percentComplete ($i / $vmdataDisk.count*100)
     #Obtencion Disk Data
     $datadisk_int = Get-AzureRmDisk -ResourceGroupName $resourceGroupName -DiskName $diskData.Name
 
