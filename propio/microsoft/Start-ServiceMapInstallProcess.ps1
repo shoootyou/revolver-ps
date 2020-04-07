@@ -5,7 +5,7 @@ $RM_PAT = "\admin$\CloudMigration\"
 $AG_MOM = "MMASetup-AMD64.exe"
 $AG_DEP = "InstallDependencyAgent-Windows.exe"
 $LG_NAM = (Get-Date -Format "yyyyMMdd") + "-Deploymentlog.log"
-Remove-Item ($TL_PAT + $LG_NAM) -Force  -ErrorAction SilentlyContinue
+Remove-Item ($TL_PAT + $LG_NAM) -Force  # -ErrorAction SilentlyContinue
 "Computador,Sesion,Copia,EstadoRDP" | Out-File -FilePath ($TL_PAT + $LG_NAM) -Append -Encoding utf8
 $IN_CON = 1
 foreach($INT in $DB_COM){
@@ -13,9 +13,9 @@ foreach($INT in $DB_COM){
     $CP_DOM = ($CP_NAM + $IN_DOM)
     Write-Progress -Activity "Instalando Agentes" -Status "Instalando agente en equipo $CP_NAM" -Id 100 -PercentComplete ($IN_CON / $DB_COMP.Count*100)
     Write-Progress -Activity ($CP_NAM.ToUpper()) -Status "Validaciones iniciales" -ParentId 100 -PercentComplete 25
-    $CP_SES = New-PSSession -ComputerName $CP_DOM -ErrorAction SilentlyContinue
+    $CP_SES = New-PSSession -ComputerName $CP_DOM # -ErrorAction SilentlyContinue
     $CP_RDP = Test-NetConnection -ComputerName ($CP_NAM + $IN_DOM) -Port 3389 -InformationLevel Quiet -WarningAction SilentlyContinue
-    $CP_PAT = Test-Path ("\\" + $CP_NAM + $IN_DOM + "\C$\CloudMigration") -ErrorAction SilentlyContinue
+    $CP_PAT = Test-Path ("\\" + $CP_NAM + $IN_DOM + "\C$\CloudMigration") # -ErrorAction SilentlyContinue
     Write-Progress -Activity ($CP_NAM.ToUpper()) -Status "Creación de directorio" -ParentId 100 -PercentComplete 50
     if($CP_SES){
         $JOB_CRE = Invoke-Command -ComputerName $CP_DOM -AsJob -ScriptBlock { 
