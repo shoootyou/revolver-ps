@@ -3,10 +3,11 @@
 <#
 Connect-AzAccount 
 $DBG_OP = $false
+$TNT_ID = "fca6d03e-0144-4abb-9215-05ebbce29cb0"
 
 #>
 
-$COR_AZ_SUB = Get-AzSubscription | Select-Object *
+$COR_AZ_SUB = Get-AzSubscription -TenantId $TNT_ID | Select-Object *
 
 foreach($SUB in $COR_AZ_SUB){
     Select-AzSubscription -Subscription $SUB.SubscriptionId
@@ -14,7 +15,7 @@ foreach($SUB in $COR_AZ_SUB){
 
     $DB_AZ_RES = Get-AzResource | Select-Object * | Sort-Object Type
 
-    $DB_AZ_BCK_VLT = Get-AzRecoveryServicesVault
+    $DB_AZ_BCK_VLT = Get-AzRecoveryServicesVault     
     $DB_AZ_VMS_LST = Get-AzVM | Sort-Object Name
     $DB_AZ_NSG_LST = Get-AzNetworkSecurityGroup
     $DB_AZ_STO_LST = Get-AzStorageAccount
