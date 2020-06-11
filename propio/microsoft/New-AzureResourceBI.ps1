@@ -5,7 +5,6 @@ Versión: 1.0
 Required Modules:
     AzureAD
     Az.Table
-    Az.Security
     Az
 
 ################################################################################################>
@@ -13,9 +12,9 @@ Required Modules:
 <#region de inicio de sesión y datos
 
 Connect-AzAccount
-$TNT_ID = "6bd26233-ca66-4e19-81f7-976f438ab397"
+$TNT_ID = "1682654c-afff-4760-8e95-b9d57482d7d0"
 $COR_AZ_TNT_ALL = Connect-AzureAD -TenantId $TNT_ID
-$OUT_TBL_CNN = "DefaultEndpointsProtocol=https;AccountName=azrsrcbi001;AccountKey=YrHybuuJJJiskDFLcjGXjR/4s+44b0fA5lo0/xj+GFXQoBjd55dgET0KkaLLC06bL7tIWQq8QthmhpC+EoJCXQ==;EndpointSuffix=core.windows.net"
+$OUT_TBL_CNN = "DefaultEndpointsProtocol=https;AccountName=orionazreport01;AccountKey=z1HEoa90hHAKPr0hW0SNpymDpjRwJxMCJq/XOXNZfms7w+nu/3tfpktzQ5wu6rTPUzrxDkvW3JG87mVfVJusSg==;EndpointSuffix=core.windows.net"
 $OUT_TBL_CTX = New-AzStorageContext -ConnectionString $OUT_TBL_CNN
 $ErrorActionPreference = "SilentlyContinue"
 $WarningPreference = "SilentlyContinue"
@@ -26,7 +25,7 @@ region obtención de informacion base #>
 #region de definicion de variables bases y de inicialización
 
 $GBL_IN_FOR_CNT = 1
-$GBL_IN_SUB_CNT = 1
+$GBL_IN_SUB_CNT = 2
 
 #endregion de definicion de variables bases y de inicialización
 
@@ -36,55 +35,37 @@ $COR_AZ_SUB_ALL = Get-AzSubscription -TenantId $TNT_ID | Select-Object *
 
 #endregion obtencion de recursos de subscripción
 
-#region de preparación de tablas maestras
-Write-Host "0 - Creacion de tablas maestras de recursos" -ForegroundColor DarkGray
-$OUT_DB_TBL_ACC =  Get-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterresourcestableurl" -ErrorAction SilentlyContinue
-if(!$OUT_DB_TBL_ACC){
-    Start-Sleep -Seconds 10
-    $OUT_DB_TBL_ACC = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterresourcestableurl"
-}
-Write-Host "        Tabla de acceso a los recursos creada exitosamente" -ForegroundColor Green
+#region de limpieza de tablas existentes
+Write-Host "0 - Limpieza de tablas maestras de recursos" -ForegroundColor DarkGray
+Get-AzStorageTable -Context $OUT_TBL_CTX | ForEach-Object { Remove-AzStorageTable -Name $_.Name -Context $OUT_TBL_CTX}
+Write-Host "        Procedimiento de limpieza de tablas preexistentes completado exitosamente" -ForegroundColor Green
+#endregion de limpieza de tablas existentes
 
-$OUT_DB_TBL_SUB =  Get-AzStorageTable -Context $OUT_TBL_CTX -Name "amastersubscription" -ErrorAction SilentlyContinue
-if(!$OUT_DB_TBL_SUB){
-    Start-Sleep -Seconds 10
-    $OUT_DB_TBL_SUB = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amastersubscription"
-}
+#region de preparación de tablas maestras
+Write-Host "1 - Creacion de tablas maestras de recursos" -ForegroundColor DarkGray
+
+Start-Sleep -Seconds 10
+$OUT_DB_TBL_SUB = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amastersubscription"
 Write-Host "        Tabla de listado de suscripciones creada exitosamente" -ForegroundColor Green
 
-$OUT_DB_TBL_RSG =  Get-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterresourcegroup" -ErrorAction SilentlyContinue
-if(!$OUT_DB_TBL_RSG){
-    Start-Sleep -Seconds 10
-    $OUT_DB_TBL_RSG = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterresourcegroup"
-}
+Start-Sleep -Seconds 10
+$OUT_DB_TBL_RSG = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterresourcegroup"
 Write-Host "        Tabla de listado de grupo de recursos creada exitosamente" -ForegroundColor Green
 
-$OUT_DB_TBL_REG =  Get-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterregions" -ErrorAction SilentlyContinue
-if(!$OUT_DB_TBL_REG){
-    Start-Sleep -Seconds 10
-    $OUT_DB_TBL_REG = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterregions"
-}
+Start-Sleep -Seconds 10
+$OUT_DB_TBL_REG = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterregions"
 Write-Host "        Tabla de listado de regiones creada exitosamente" -ForegroundColor Green
 
-$OUT_DB_TBL_RES =  Get-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterresources" -ErrorAction SilentlyContinue
-if(!$OUT_DB_TBL_RES){
-    Start-Sleep -Seconds 10
-    $OUT_DB_TBL_RES = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterresources"
-}
+Start-Sleep -Seconds 10
+$OUT_DB_TBL_RES = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterresources"
 Write-Host "        Tabla de listado de informacion general de recursos creada exitosamente" -ForegroundColor Green
 
-$OUT_DB_TBL_REC =  Get-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterrecommendations" -ErrorAction SilentlyContinue
-if(!$OUT_DB_TBL_REC){
-    Start-Sleep -Seconds 10
-    $OUT_DB_TBL_REC = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterrecommendations"
-}
+Start-Sleep -Seconds 10
+$OUT_DB_TBL_REC = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterrecommendations"
 Write-Host "        Tabla de listado de recomendaciones de Azure Advisor creada exitosamente" -ForegroundColor Green
 
-$OUT_DB_TBL_PER =  Get-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterpermissions" -ErrorAction SilentlyContinue
-if(!$OUT_DB_TBL_PER){
-    Start-Sleep -Seconds 10
-    $OUT_DB_TBL_PER = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterpermissions"
-}
+Start-Sleep -Seconds 10
+$OUT_DB_TBL_PER = New-AzStorageTable -Context $OUT_TBL_CTX -Name "amasterpermissions"
 Write-Host "        Tabla de listado de permisos sobre subscripciones creada exitosamente" -ForegroundColor Green
 
 #endregion de preparación de tablas maestras
@@ -120,25 +101,12 @@ foreach($SUB in $COR_AZ_SUB_ALL){
             Start-Sleep -Seconds 5
             $FOR_INT_01 = New-AzStorageTable -Context $OUT_TBL_CTX -Name $FOR_INT_00
         }
-        
-        Add-AzTableRow `
-            -UpdateExisting `
-            -Table $OUT_DB_TBL_ACC.CloudTable `
-            -PartitionKey $SUB.TenantId `
-            -RowKey $FOR_INT_00 `
-            -Property @{
-                "Uri" = $FOR_INT_01.Uri.AbsoluteUri;
-                "Context" = $FOR_INT_01.Context.ConnectionString;
-                "SubscriptionId" = $SUB.SubscriptionId 
-            } | Out-Null
 
         $FOR_INT_00 = $null
         $FOR_INT_01 = $null
 
     }
     Write-Host "        Se crearon " $DB_AZ_RES_TYP.Length "tablas de forma exitosa" -ForegroundColor DarkGreen
-    Write-Host "        Se cargo la informacion de acceso de" $DB_AZ_RES_TYP.Length "tablas de forma exitosa" -ForegroundColor DarkGreen
-    
 
     #endregion provisionamiento de tablas de acceso de recursos
     
@@ -214,7 +182,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
     foreach($RES in $DB_AZ_RES_ALL){
         $WR_BAR = ($RES.ResourceId.Substring($RES.ResourceId.IndexOf("providers")+10)).Replace("/",".").Replace(" ","_").Replace("#","_")
         If(!$RES.ParentResource){
-            $PAR_RES = "-"
+            $PAR_RES = "Undefined"
         }
         else{
             $PAR_RES = $RES.ParentResource
@@ -255,8 +223,8 @@ foreach($SUB in $COR_AZ_SUB_ALL){
            $WR_BAR = $REC.Name
            $IM_FLD = $REC.ImpactedField
            if(!$IM_FLD){
-            $IM_FLD = "-"
-            $IM_PRO = "-"
+            $IM_FLD = "Undefined"
+            $IM_PRO = "Undefined"
            }
            else{
                $IM_PRO = $REC.ImpactedField.Substring(0,$REC.ImpactedField.IndexOf("."))
@@ -299,7 +267,16 @@ foreach($SUB in $COR_AZ_SUB_ALL){
         $FD_SIG = $USR.SignInName
         $FD_ROW = $USR.RoleAssignmentId.Substring($USR.RoleAssignmentId.LastIndexOf("/")+1)
         if($USR.ObjectType -eq "User"){
-            $FS_TYP = (Get-AzureADUser -ObjectId $USR.ObjectId | Select-Object UserType).UserType
+            $FS_TYP = Get-AzureADUser -ObjectId $USR.ObjectId | Select-Object *
+            if($FS_TYP.UserType){
+                $FS_TYP =  $FS_TYP.UserType
+            }
+            elseif($FS_TYP.ImmutableId){
+                $FS_TYP = "Member"
+            }
+            else{
+                $FS_TYP = "Undefined"
+            }
         }
         elseif ($USR.ObjectType -eq "ServicePrincipal") {
             $FS_TYP = (Get-AzureADServicePrincipal -ObjectId $USR.ObjectId | Select-Object ServicePrincipalType).ServicePrincipalType
@@ -322,7 +299,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
         }
 
         if(!$FD_SIG){
-            $FD_SIG = "-"
+            $FD_SIG = "Undefined"
         }
 
         Write-Progress -Activity "Cargando informacion" -status "Actualizando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_PER_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
@@ -335,7 +312,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                 "RoleAssignmentId" = $USR.RoleAssignmentId;
                 "Scope" = $USR.Scope;
                 "ScopeLevel" = $FD_SCP;
-                "DisplayName" = $USR.DisplayName
+                "DisplayName" = $USR.DisplayName;
                 "SignInName" = $FD_SIG;
                 "RoleDefinitionName" = $USR.RoleDefinitionName;
                 "RoleDefinitionId" = $USR.RoleDefinitionId;
@@ -345,11 +322,84 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                 "SubscriptionId" = $SUB.SubscriptionId
             } | Out-Null
         $GBL_IN_FOR_CNT++
-
+        
     }
     Write-Host "        Se cargaron " $DB_AZ_PER_ALL.Length " usuarios administrativos exitosamente" -ForegroundColor DarkGreen
     $GBL_IN_FOR_CNT = 1
     #endregion información de informacion de usuarios administrativos de Azure
-    
+
+    #region informacion de Storages Accounts
+        
+    Write-Host "    I. Cargado de informacion de cuentas de almacenamiento" -ForegroundColor Cyan
+    $DB_AZ_STO_ALL = $DB_AZ_RES_ALL | Where-Object {$_.ResourceType -eq 'Microsoft.Storage/storageAccounts'} | Select-Object *
+    $OUT_DB_TBL_STO = Get-AzStorageTable -Context $OUT_TBL_CTX -Name ((($DB_AZ_STO_ALL | Select-Object ResourceType -Unique).ResourceType).ToLower().replace(".","").replace("/",""))
+    $GBL_IN_FOR_CNT = 1
+    foreach($STO in $DB_AZ_STO_ALL){
+        $STO_INF = Get-AzStorageAccount -ResourceGroupName $STO.ResourceGroupName -Name $STO.Name
+        $WR_BAR = $STO_INF.StorageAccountName
+        Write-Progress -Activity "Cargando informacion" -status "Actualizando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_STO_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
+        if(!$STO_INF.CustomDomain){
+            $CST_DMN = "Undefined"
+        }
+        else{
+            $CST_DMN = $STO_INF.CustomDomain
+        }
+        if(!$STO_INF.LargeFileSharesState){
+            $SHR_LRG = "Undefined"
+        }
+        else{
+            $SHR_LRG = $STO_INF.LargeFileSharesState
+        }
+        If(!$STO_INF.NetworkRuleSet.IpRules){
+            $RL_IPS = "Empty"
+        }
+        else{
+            $RL_IPS = "Defined"
+        }
+        If(!$STO_INF.NetworkRuleSet.VirtualNetworkRules){
+            $RL_IPS = "Empty"
+        }
+        else{
+            $RL_IPS = ($STO_INF.NetworkRuleSet.VirtualNetworkRules | Measure-Object).Count
+        }
+        If(!$STO_INF.AccessTier){
+            $ACC_TIR = "Undefined"
+        }
+        else{
+            $ACC_TIR = $STO_INF.AccessTier.ToString()
+        }
+        Add-AzTableRow `
+            -UpdateExisting `
+            -Table $OUT_DB_TBL_STO.CloudTable `
+            -PartitionKey $SUB.SubscriptionId `
+            -RowKey $STO_INF.StorageAccountName `
+            -Property @{
+                "ResourceGroupName" = $STO_INF.ResourceGroupName;
+                "Id" = $STO_INF.Id;
+                "Location" = $STO_INF.Location;
+                "SkuName" = $STO_INF.Sku.Name.ToString();
+                "SkuTier" = $STO_INF.Sku.Tier.ToString();
+                "Kind" = $STO_INF.Kind.ToString();
+                "AccessTier" = $ACC_TIR;
+                "CreationTime" = $STO_INF.CreationTime;
+                "CustomDomain" = $CST_DMN;
+                "PrimaryLocation" = $STO_INF.PrimaryLocation.ToString();
+                "ProvisioningState" = $STO_INF.ProvisioningState.ToString();
+                "StatusOfPrimary" = $STO_INF.StatusOfPrimary.ToString();
+                "EnableHttpsTrafficOnly" = $STO_INF.EnableHttpsTrafficOnly;
+                "LargeFileSharesState" = $SHR_LRG;
+                "NetworkRuleSetBypass" = $STO_INF.NetworkRuleSet.Bypass.ToString();
+                "NetworkRuleSetDefaultAction" = $STO_INF.NetworkRuleSet.DefaultAction.ToString();
+                "NetworkRuleSetIpRules" = $RL_IPS;
+                "NetworkRuleSetVirtualNetworkRules" = $RL_IPS;
+                "TenantId" = $SUB.TenantId
+            } | Out-Null
+        $GBL_IN_FOR_CNT++
+
+    }
+    Write-Host "        Se cargaron " $DB_AZ_STO_ALL.Length " cuentas de almacenamiento exitosamente" -ForegroundColor DarkGreen
+    $GBL_IN_FOR_CNT = 1
+    #endregion informacion de Storages Accounts
+
     $GBL_IN_SUB_CNT++
 }
