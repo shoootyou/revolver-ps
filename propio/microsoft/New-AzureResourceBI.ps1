@@ -200,7 +200,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
             else{
                 $PAR_RES = $RES.ParentResource
             }
-            Write-Progress -Activity "Cargando informacion" -status "Actualizando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_RES_ALL.Count*100) -ErrorAction SilentlyContinue -ParentId 100
+            Write-Progress -Activity "Azure Resources" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_RES_ALL.Count*100) -ErrorAction SilentlyContinue -ParentId 100
             Add-AzTableRow `
                 -UpdateExisting `
                 -Table $OUT_DB_TBL_RES.CloudTable `
@@ -241,7 +241,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                 $IM_SBT = $REC.ImpactedField.Substring($REC.ImpactedField.IndexOf("/")+1)
             }
 
-            Write-Progress -Activity "Cargando informacion" -status "Actualizando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_REC_ALL.Count*100) -ErrorAction SilentlyContinue -ParentId 100
+            Write-Progress -Activity "Azure Advisor Recommendations" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_REC_ALL.Count*100) -ErrorAction SilentlyContinue -ParentId 100
             Add-AzTableRow `
                 -UpdateExisting `
                 -Table $OUT_DB_TBL_REC.CloudTable `
@@ -312,7 +312,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                 $FD_SIG = "Undefined"
             }
 
-            Write-Progress -Activity "Cargando informacion" -status "Actualizando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_PER_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
+            Write-Progress -Activity "Usuarios administrativos (RBAC)" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_PER_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
             Add-AzTableRow `
                 -UpdateExisting `
                 -Table $OUT_DB_TBL_PER.CloudTable `
@@ -348,7 +348,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
             foreach($STO in $DB_AZ_STO_ALL){
                 $STO_INF = Get-AzStorageAccount -ResourceGroupName $STO.ResourceGroupName -Name $STO.Name
                 $WR_BAR = $STO_INF.StorageAccountName
-                Write-Progress -Activity "Cargando informacion" -status "Actualizando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_STO_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
+                Write-Progress -Activity "Storages Account" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_STO_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
                 if(!$STO_INF.CustomDomain){
                     $CST_DMN = "-"
                 }
@@ -438,7 +438,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
 
         #region informacion de Virtual Machines
     
-        Write-Host "    I. Cargado de informacion de máquinas virtuales" -ForegroundColor Cyan
+        Write-Host "    J. Cargado de informacion de máquinas virtuales" -ForegroundColor Cyan
         $DB_AZ_CMP_ALL = $DB_AZ_RES_ALL | Where-Object {$_.ResourceType -eq 'Microsoft.Compute/virtualMachines'} | Select-Object *
         if($DB_AZ_CMP_ALL){
             $OUT_DB_TBL_CMP = Get-AzStorageTable -Context $OUT_TBL_CTX -Name ((($DB_AZ_CMP_ALL | Select-Object ResourceType -Unique).ResourceType).ToLower().replace(".","").replace("/",""))
@@ -446,7 +446,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
             foreach($CMP in $DB_AZ_CMP_ALL){
                 $CMP_INF = Get-AzVM -ResourceGroupName $CMP.ResourceGroupName -Name $CMP.Name
                 $WR_BAR = $CMP_INF.Name
-                Write-Progress -Activity "Cargando informacion" -status "Actualizando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_CMP_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
+                Write-Progress -Activity "Virtual Machines" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_CMP_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
                 if($CMP_INF.OSProfile.WindowsConfiguration){
                     $SO_CONFIG = "Windows"
                     if($CMP_INF.OSProfile.WindowsConfiguration.ProvisionVMAgent){
