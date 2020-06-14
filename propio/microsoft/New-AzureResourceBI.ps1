@@ -246,7 +246,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                 -Property @{
                     "Problem" = $REC.ShortDescription.Problem;
                     "Solution" = $REC.ShortDescription.Solution;
-                    "ImpactedValue" = $REC.ImpactedValue
+                    "ImpactedValue" = $REC.ImpactedValue;
                     "ImpactedField" = $IM_FLD;
                     "ImpactedProvider" = $IM_PRO;
                     "ImpactedType" = $IM_TYP;
