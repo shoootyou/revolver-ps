@@ -1,11 +1,15 @@
 <################################################################################################
 
-Author: Rodolfo Castelo Méndez
+Author  : Rodolfo Castelo Méndez
+Date    : 06 / 14 / 2020
 Versión: 2.1
 Required Modules:
     AzureAD
     AzTable
-    Az
+    Az.Accounts
+    Az.Advisor
+    Az.Resources
+    Az.Storage
     
 ################################################################################################>
 
@@ -431,6 +435,88 @@ foreach($SUB in $COR_AZ_SUB_ALL){
         Write-Host "        No se tienen cuentas de almacenamiento que revisar" -ForegroundColor DarkGreen
         
         #endregion informacion de Storages Accounts
+
+        #region informacion de Virtual Machines
+    
+        Write-Host "    I. Cargado de informacion de máquinas virtuales" -ForegroundColor Cyan
+        $DB_AZ_CMP_ALL = $DB_AZ_RES_ALL | Where-Object {$_.ResourceType -eq 'Microsoft.Compute/virtualMachines'} | Select-Object *
+        if($DB_AZ_CMP_ALL){
+            $OUT_DB_TBL_CMP = Get-AzStorageTable -Context $OUT_TBL_CTX -Name ((($DB_AZ_CMP_ALL | Select-Object ResourceType -Unique).ResourceType).ToLower().replace(".","").replace("/",""))
+            $GBL_IN_FOR_CNT = 1
+            foreach($CMP in $DB_AZ_CMP_ALL){
+                $CMP_INF = Get-AzVM -ResourceGroupName $CMP.ResourceGroupName -Name $CMP.Name
+                $WR_BAR = $CMP_INF.Name
+                Write-Progress -Activity "Cargando informacion" -status "Actualizando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_CMP_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
+                if($CMP_INF.OSProfile.WindowsConfiguration){
+                    $SO_CONFIG = "Windows"
+                    if($CMP_INF.OSProfile.WindowsConfiguration.ProvisionVMAgent){
+                        $AGN_PRO = $CMP_INF.OSProfile.WindowsConfiguration.ProvisionVMAgent
+                    }
+                    else{
+                        $AGN_PRO = "Missing"
+                    }
+                    $AUT_UPD = $CMP_INF.OSProfile.WindowsConfiguration.EnableAutomaticUpdates
+                    $PSW_AUT = "-"
+                    $SSH_PAT = "-"
+                }
+                else{
+                    $SO_CONFIG = "Linux"
+                    if($CMP_INF.OSProfile.LinuxConfiguration.ProvisionVMAgent){
+                        $AGN_PRO = $CMP_INF.OSProfile.LinuxConfiguration.ProvisionVMAgent
+                    }
+                    else{
+                        $AGN_PRO = "Missing"
+                    }                 
+                    $PSW_AUT = $CMP_INF.OSProfile.LinuxConfiguration.DisablePasswordAuthentication
+                    if($CMP_INF.OSProfile.LinuxConfiguration.Ssh){
+                        $SSH_PAT = ($CMP_INF.OSProfile.LinuxConfiguration.Ssh.PublicKeys | Select-Object Path).Path -Join ";"
+                    }
+                    else{
+                        $SSH_PAT = "-"
+                    }
+                    $AUT_UPD = "-"
+                }
+                
+                Add-AzTableRow `
+                    -UpdateExisting `
+                    -Table $OUT_DB_TBL_CMP.CloudTable `
+                    -PartitionKey $SUB.SubscriptionId `
+                    -RowKey $CMP_INF.VmId `
+                    -Property @{
+                        "TenantId" = $SUB.TenantId;
+                        "ResourceGroupName" = $CMP_INF.ResourceGroupName;
+                        "Id" = $CMP_INF.Id;
+                        "Name" = $CMP_INF.Name;
+                        "Type" = $CMP_INF.Type;
+                        "Location" = $CMP_INF.Location;
+                        "BootDiagnostics" = $CMP_INF.DiagnosticsProfile.BootDiagnostics.Enabled;
+                        "BootDiagnosticsStorage" = $CMP_INF.DiagnosticsProfile.BootDiagnostics.StorageUri;
+                        "VmSize" = $CMP_INF.OSProfile.ComputerName;
+                        "AdminUsername" = $CMP_INF.OSProfile.AdminUsername;
+                        "OperatingSystem" = $SO_CONFIG;
+                        "OperatingSystemPublisher" = $CMP_INF.StorageProfile.ImageReference.Publisher;
+                        "OperatingSystemOffer" = $CMP_INF.StorageProfile.ImageReference.Offer;
+                        "OperatingSystemSku" = $CMP_INF.StorageProfile.ImageReference.Sku;
+                        "OperatingSystemVersion" = $CMP_INF.StorageProfile.ImageReference.Version;
+                        "OperatingSystemExactVersion" = $CMP_INF.StorageProfile.ImageReference.ExactVersion;
+                        "ProvisionVMAgent" = $AGN_PRO;
+                        "LinuxDisablePasswordAuthentication" = $PSW_AUT;
+                        "LinuxSSHPaths" = $SSH_PAT;
+                        "WindowsEnableAutomaticUpdates" = $AUT_UPD;
+                        "ProvisioningState" = $CMP_INF.ProvisioningState;
+                        "AllowExtensionOperations" = $CMP_INF.OSProfile.AllowExtensionOperations;
+                        "RequireGuestProvisionSignal" = $CMP_INF.OSProfile.RequireGuestProvisionSignal;
+                        
+                    } | Out-Null
+                $GBL_IN_FOR_CNT++
+
+            }
+            Write-Host "        Se cargaron " $DB_AZ_CMP_ALL.Length " máquinas virtuales exitosamente" -ForegroundColor DarkGreen
+            $GBL_IN_FOR_CNT = 1
+        }
+        Write-Host "        No se tienen máquinas virtuales que revisar" -ForegroundColor DarkGreen
+        
+        #endregion informacion de Virtual Machines
     }
     else{
         Write-Host "    A. Suscripción deshabilitada" -ForegroundColor Cyan
