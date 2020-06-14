@@ -86,7 +86,7 @@ Write-Host "        Tabla de listado de permisos sobre subscripciones creada exi
 foreach($SUB in $COR_AZ_SUB_ALL){
     Clear-Host
     $WR_BAR = $SUB.Name
-    Write-Progress -Activity "Cargando informacion" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_SUB_CNT / $COR_AZ_SUB_ALL.Count*100) -ErrorAction SilentlyContinue -Id 100
+    Write-Progress -Activity "Actualizando informacion para Reporte de recursos de Azure en Power BI" -status "Suscripcion: $WR_BAR" -percentComplete ($GBL_IN_SUB_CNT / $COR_AZ_SUB_ALL.Count*100) -ErrorAction SilentlyContinue -Id 100
     Write-Host $GBL_IN_SUB_CNT "- Inicializacion de datos para subscripcion" $SUB.SubscriptionId -ForegroundColor DarkGray
     
     #region selección de subscripción y recursos
@@ -476,7 +476,18 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                     }
                     $AUT_UPD = "-"
                 }
-                
+                If($CMP_INF.OSProfile.AllowExtensionOperations){
+                    $ALL_EXT = $CMP_INF.OSProfile.AllowExtensionOperations
+                }
+                else{
+                    $ALL_EXT = "-"
+                }
+                if($CMP_INF.OSProfile.RequireGuestProvisionSignal){
+                    $GST_PRO = $CMP_INF.OSProfile.RequireGuestProvisionSignal
+                }
+                else{
+                    $GST_PRO = "-"
+                }
                 Add-AzTableRow `
                     -UpdateExisting `
                     -Table $OUT_DB_TBL_CMP.CloudTable `
@@ -504,14 +515,14 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                         "LinuxSSHPaths" = $SSH_PAT;
                         "WindowsEnableAutomaticUpdates" = $AUT_UPD;
                         "ProvisioningState" = $CMP_INF.ProvisioningState;
-                        "AllowExtensionOperations" = $CMP_INF.OSProfile.AllowExtensionOperations;
-                        "RequireGuestProvisionSignal" = $CMP_INF.OSProfile.RequireGuestProvisionSignal;
+                        "AllowExtensionOperations" = $ALL_EXT;
+                        "RequireGuestProvisionSignal" = $GST_PRO;
                         
                     } | Out-Null
                 $GBL_IN_FOR_CNT++
 
             }
-            Write-Host "        Se cargaron " $DB_AZ_CMP_ALL.Length " máquinas virtuales exitosamente" -ForegroundColor DarkGreen
+            Write-Host "        Se cargaron " $DB_AZ_CMP_ALL.Length " maquinas virtuales exitosamente" -ForegroundColor DarkGreen
             $GBL_IN_FOR_CNT = 1
         }
         Write-Host "        No se tienen máquinas virtuales que revisar" -ForegroundColor DarkGreen
