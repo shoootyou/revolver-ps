@@ -13,19 +13,12 @@ Required Modules:
     
 ################################################################################################>
 
-<#region de inicio de sesión y datos
-
-$COR_AZ_RES_ALL = Connect-AzAccount
-$TNT_ID = $COR_AZ_RES_ALL.Context.Tenant.Id
-$COR_AZ_TNT_ALL = Connect-AzureAD -TenantId $TNT_ID
-$OUT_TBL_CNN = "DefaultEndpointsProtocol=https;AccountName=orionazreport01;AccountKey=z1HEoa90hHAKPr0hW0SNpymDpjRwJxMCJq/XOXNZfms7w+nu/3tfpktzQ5wu6rTPUzrxDkvW3JG87mVfVJusSg==;EndpointSuffix=core.windows.net"
-
-region obtención de informacion base #>
-
 #region de definicion de variables bases y de inicialización
 
 $GBL_IN_FOR_CNT = 1
 $GBL_IN_SUB_CNT = 0
+$ErrorActionPreference = "Inquire"
+$WarningPreference = "Inquire"
 
 #endregion de definicion de variables bases y de inicialización
 
@@ -142,6 +135,13 @@ foreach($SUB in $COR_AZ_SUB_ALL){
             $FOR_INT_01 = $null
 
         }
+        #region creacion de tabla para discos no atachados
+        $FOR_INT_01 = Get-AzStorageTable -Context $OUT_TBL_CTX -Name microsoftcomputedisksu -ErrorAction SilentlyContinue
+        if(!$FOR_INT_01){
+            New-AzStorageTable -Context $OUT_TBL_CTX -Name microsoftcomputedisksu
+        }
+        #endregion creacion de tabla para discos no atachados
+
         Write-Host "        Se crearon " $DB_AZ_RES_TYP.Length "tablas de forma exitosa" -ForegroundColor DarkGreen
 
         #endregion provisionamiento de tablas de acceso de recursos
@@ -349,6 +349,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                 $STO_INF = Get-AzStorageAccount -ResourceGroupName $STO.ResourceGroupName -Name $STO.Name
                 $WR_BAR = $STO_INF.StorageAccountName
                 Write-Progress -Activity "Storages Account" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_STO_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
+                #region comprobaciones internas de Storages Accounts
                 if(!$STO_INF.CustomDomain){
                     $CST_DMN = "-"
                 }
@@ -395,6 +396,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                 else{
                     $SEC_STS = $STO_INF.StatusOfSecondary.ToString()
                 }
+                #endregion comprobaciones internas de Storages Accounts
                 Add-AzTableRow `
                     -UpdateExisting `
                     -Table $OUT_DB_TBL_STO.CloudTable `
@@ -432,13 +434,15 @@ foreach($SUB in $COR_AZ_SUB_ALL){
             Write-Host "        Se cargaron " $DB_AZ_STO_ALL.Length " cuentas de almacenamiento exitosamente" -ForegroundColor DarkGreen
             $GBL_IN_FOR_CNT = 1
         }
-        Write-Host "        No se tienen cuentas de almacenamiento que revisar" -ForegroundColor DarkGreen
+        else{
+            Write-Host "        No se tienen cuentas de almacenamiento que revisar" -ForegroundColor DarkGreen
+        }
         
         #endregion informacion de Storages Accounts
 
         #region informacion de Virtual Machines
     
-        Write-Host "    J. Cargado de informacion de máquinas virtuales" -ForegroundColor Cyan
+        Write-Host "    J. Cargado de informacion de maquinas virtuales" -ForegroundColor Cyan
         $DB_AZ_CMP_ALL = $DB_AZ_RES_ALL | Where-Object {$_.ResourceType -eq 'Microsoft.Compute/virtualMachines'} | Select-Object *
         if($DB_AZ_CMP_ALL){
             $OUT_DB_TBL_CMP = Get-AzStorageTable -Context $OUT_TBL_CTX -Name ((($DB_AZ_CMP_ALL | Select-Object ResourceType -Unique).ResourceType).ToLower().replace(".","").replace("/",""))
@@ -446,11 +450,17 @@ foreach($SUB in $COR_AZ_SUB_ALL){
             foreach($CMP in $DB_AZ_CMP_ALL){
                 $CMP_INF = Get-AzVM -ResourceGroupName $CMP.ResourceGroupName -Name $CMP.Name
                 $WR_BAR = $CMP_INF.Name
-                Write-Progress -Activity "Virtual Machines" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_CMP_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
-                if($CMP_INF.OSProfile.WindowsConfiguration){
+                if($DB_AZ_CMP_ALL.Count){
+                    Write-Progress -Activity "Virtual Machines" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_CMP_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
+                }
+                else{
+                    Write-Progress -Activity "Virtual Machines" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / 1*100) -ErrorAction SilentlyContinue  -ParentId 100
+                }
+                #region comprobaciones internas de virtual machines
+                if($null -ne $CMP_INF.OSProfile.WindowsConfiguration){
                     $SO_CONFIG = "Windows"
                     if($CMP_INF.OSProfile.WindowsConfiguration.ProvisionVMAgent){
-                        $AGN_PRO = $CMP_INF.OSProfile.WindowsConfiguration.ProvisionVMAgent
+                        $AGN_PRO = "Installed"
                     }
                     else{
                         $AGN_PRO = "Missing"
@@ -462,7 +472,7 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                 else{
                     $SO_CONFIG = "Linux"
                     if($CMP_INF.OSProfile.LinuxConfiguration.ProvisionVMAgent){
-                        $AGN_PRO = $CMP_INF.OSProfile.LinuxConfiguration.ProvisionVMAgent
+                        $AGN_PRO = "Installed"
                     }
                     else{
                         $AGN_PRO = "Missing"
@@ -476,18 +486,51 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                     }
                     $AUT_UPD = "-"
                 }
-                If($CMP_INF.OSProfile.AllowExtensionOperations){
-                    $ALL_EXT = $CMP_INF.OSProfile.AllowExtensionOperations
+                If($null -ne $CMP_INF.OSProfile.AllowExtensionOperations){
+                    if($CMP_INF.OSProfile.AllowExtensionOperations -eq $true){
+                        $ALL_EXT = "Allowed"
+                    }
+                    else{
+                        $ALL_EXT = "Not Allowed"
+                    }
                 }
                 else{
-                    $ALL_EXT = "-"
+                    $ALL_EXT = "Undefined"  
                 }
-                if($CMP_INF.OSProfile.RequireGuestProvisionSignal){
-                    $GST_PRO = $CMP_INF.OSProfile.RequireGuestProvisionSignal
+                if($null -ne $CMP_INF.OSProfile.RequireGuestProvisionSignal){
+                    if($CMP_INF.OSProfile.RequireGuestProvisionSignal -eq $true){
+                        $GST_PRO = "Allowed"
+                    }
+                    else{
+                        $GST_PRO = "Not Allowed"
+                    }
                 }
                 else{
-                    $GST_PRO = "-"
+                    $GST_PRO = "Undefined"
                 }
+                if($null -ne $CMP_INF.DiagnosticsProfile.BootDiagnostics.Enabled){
+                    $BOT_ENA = $CMP_INF.DiagnosticsProfile.BootDiagnostics.Enabled.ToString()
+                    $BOT_STO = $CMP_INF.DiagnosticsProfile.BootDiagnostics.StorageUri
+                }
+                else{
+                    $BOT_ENA = "Undefined"
+                    $BOT_STO = "Undefined"
+                }
+                if($null -ne $CMP_INF.StorageProfile.OsDisk.ManagedDisk){
+                    $OS_MGM = "Managed"
+                    $OS_PAT = $CMP_INF.StorageProfile.OsDisk.ManagedDisk.Id
+                    $OS_STO = "Managed"
+                    $OS_VHD = "Managed"
+                }
+                else{
+                    $OS_MGM = "Unmanaged"
+                    $OS_PAT = $CMP_INF.StorageProfile.OsDisk.Vhd.Uri
+                    $IN_FIR = $OS_PAT.Substring($OS_PAT.IndexOf("//")+2)
+                    $OS_STO = $IN_FIR.Substring(0,$IN_FIR.IndexOf("."))
+                    $OS_VHD = $OS_PAT.Substring($OS_PAT.LastIndexOf("/")+1)
+                }
+                
+                #endregion comprobaciones internas de virtual machines
                 Add-AzTableRow `
                     -UpdateExisting `
                     -Table $OUT_DB_TBL_CMP.CloudTable `
@@ -500,9 +543,10 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                         "Name" = $CMP_INF.Name;
                         "Type" = $CMP_INF.Type;
                         "Location" = $CMP_INF.Location;
-                        "BootDiagnostics" = $CMP_INF.DiagnosticsProfile.BootDiagnostics.Enabled;
-                        "BootDiagnosticsStorage" = $CMP_INF.DiagnosticsProfile.BootDiagnostics.StorageUri;
-                        "VmSize" = $CMP_INF.OSProfile.ComputerName;
+                        "BootDiagnostics" = $BOT_ENA;
+                        "BootDiagnosticsStorage" = $BOT_STO;
+                        "VmSize" = $CMP_INF.HardwareProfile.VmSize;
+                        "ComputerName" = $CMP_INF.OSProfile.ComputerName;
                         "AdminUsername" = $CMP_INF.OSProfile.AdminUsername;
                         "OperatingSystem" = $SO_CONFIG;
                         "OperatingSystemPublisher" = $CMP_INF.StorageProfile.ImageReference.Publisher;
@@ -517,22 +561,312 @@ foreach($SUB in $COR_AZ_SUB_ALL){
                         "ProvisioningState" = $CMP_INF.ProvisioningState;
                         "AllowExtensionOperations" = $ALL_EXT;
                         "RequireGuestProvisionSignal" = $GST_PRO;
+                        "ManagedDisk" = $OS_MGM;
+                        "OperatingSystemDisk" = $OS_PAT;
+                        "OperatingSystemStorage" = $OS_STO;
+                        "OperatingSystemVHD" = $OS_VHD;
+                        "NumberTags" = ($CMP_INF.Tags.Keys | Measure-Object).Count
                         
                     } | Out-Null
                 $GBL_IN_FOR_CNT++
 
             }
-            Write-Host "        Se cargaron " $DB_AZ_CMP_ALL.Length " maquinas virtuales exitosamente" -ForegroundColor DarkGreen
+            if($DB_AZ_CMP_ALL.Count){
+                Write-Host "        Se cargaron " $DB_AZ_CMP_ALL.Length " maquinas virtuales exitosamente" -ForegroundColor DarkGreen
+            }
+            else{
+                Write-Host "        Se cargaron 1 maquina virtual exitosamente" -ForegroundColor DarkGreen
+            }
             $GBL_IN_FOR_CNT = 1
         }
-        Write-Host "        No se tienen máquinas virtuales que revisar" -ForegroundColor DarkGreen
+        else{
+            Write-Host "        No se tienen maquinas virtuales que revisar" -ForegroundColor DarkGreen    
+        }
         
         #endregion informacion de Virtual Machines
+
+        #region informacion de Azure Disks
+    
+        Write-Host "    K. Cargado de informacion de azure disks" -ForegroundColor Cyan
+        $DB_AZ_DSK_ALL = $DB_AZ_RES_ALL | Where-Object {$_.ResourceType -eq 'Microsoft.Compute/disks'} | Select-Object *
+        if($DB_AZ_DSK_ALL){
+            $OUT_DB_TBL_DSK = Get-AzStorageTable -Context $OUT_TBL_CTX -Name ((($DB_AZ_DSK_ALL | Select-Object ResourceType -Unique).ResourceType).ToLower().replace(".","").replace("/",""))
+            $OUT_DB_TBL_DSU = Get-AzStorageTable -Context $OUT_TBL_CTX -Name (((($DB_AZ_DSK_ALL | Select-Object ResourceType -Unique).ResourceType).ToLower().replace(".","").replace("/","")) + "u")
+            $GBL_IN_FOR_CNT = 1
+            foreach($DSK in $DB_AZ_DSK_ALL){
+                $DSK_INF = Get-AzDisk -ResourceGroupName $DSK.ResourceGroupName -Name $DSK.Name
+                $WR_BAR = $DSK_INF.Name
+                if($DB_AZ_DSK_ALL.Count){
+                    Write-Progress -Activity "Azure Disks" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_DSK_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
+                }
+                else{
+                    Write-Progress -Activity "Azure Disks" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / 1*100) -ErrorAction SilentlyContinue  -ParentId 100
+                }
+                #region comprobaciones internas de azure disks
+                if($null -ne $DSK_INF.DiskIOPSReadOnly){
+                    $RO_IOP = $DSK_INF.DiskIOPSReadOnly
+                }
+                else{
+                    $RO_IOP = "Undefined"
+                }
+                if($null -ne $DSK_INF.DiskMBpsReadOnly){
+                    $RO_MBP = $DSK_INF.DiskMBpsReadOnly
+                }
+                else{
+                    $RO_MBP = "Undefined"
+                }
+                if($null -ne $DSK_INF.ManagedBy){
+                    $BY_MGM = $DSK_INF.ManagedBy
+                }
+                else{
+                    $BY_MGM = "Unattached"
+                }
+                if($null -ne $DSK_INF.OsType){
+                    $TP_DSK = $DSK_INF.OsType.ToString()
+                    $TP_DAT = "OperatingSystem"
+                }
+                else{
+                    $TP_DSK = "None"
+                    $TP_DAT = "Data"
+                }
+                if($null -ne $DSK_INF.HyperVGeneration){
+                    $HV_GEN = $DSK_INF.HyperVGeneration
+                }
+                else{
+                    $HV_GEN = "Undefined"
+                }
+                switch ($DSK_INF.CreationData.CreateOption) {
+                    FromImage {  
+                        $CR_OPT = $DSK_INF.CreationData.CreateOption
+                        $CR_STO = "-"
+                        $CR_IMG = $DSK_INF.CreationData.ImageReference.Id
+                        $CR_REF = "-"
+                        $CR_SRC_ID = "-"
+                        $CR_SRC_RS = "-"
+                        $CR_SRC_UN = "-"
+                        $CR_UPL = "-"
+                    }
+                    Copy {  
+                        $CR_OPT = $DSK_INF.CreationData.CreateOption
+                        $CR_STO = "-"
+                        $CR_IMG = "-"
+                        $CR_REF = "-"
+                        $CR_SRC_ID = "-"
+                        $CR_SRC_RS = $DSK_INF.CreationData.SourceResourceId
+                        $CR_SRC_UN = $DSK_INF.CreationData.SourceUniqueId
+                        $CR_UPL = "-"
+                    }
+                    Empty {  
+                        $CR_OPT = $DSK_INF.CreationData.CreateOption
+                        $CR_STO = "-"
+                        $CR_IMG = "-"
+                        $CR_REF = "-"
+                        $CR_SRC_ID = "-"
+                        $CR_SRC_RS = "-"
+                        $CR_SRC_UN = "-"
+                        $CR_UPL = "-"
+                    }
+                    Default {
+                        $CR_OPT = "-"
+                        $CR_STO = "-"
+                        $CR_IMG = "-"
+                        $CR_REF = "-"
+                        $CR_SRC_ID = "-"
+                        $CR_SRC_RS = "-"
+                        $CR_SRC_UN = "-"
+                        $CR_UPL = "-"
+                    }
+                }
+                #endregion comprobaciones internas de azure disks
+                if($BY_MGM -eq "Unattached"){
+                    Add-AzTableRow `
+                    -UpdateExisting `
+                    -Table $OUT_DB_TBL_DSU.CloudTable `
+                    -PartitionKey $SUB.SubscriptionId `
+                    -RowKey $DSK_INF.Name `
+                    -Property @{
+                        "TenantId" = $SUB.TenantId;
+                        "ResourceGroupName" = $DSK_INF.ResourceGroupName;
+                        "ManagedBy" = $BY_MGM;
+                        "SkuName" = $DSK_INF.Sku.Name;
+                        "SkuTier" = $DSK_INF.sku.Tier;
+                        "TimeCreated" = $DSK_INF.TimeCreated;
+                        "OsType" = $TP_DSK;
+                        "DiskType" = $TP_DAT;
+                        "HyperVGeneration" = $HV_GEN;
+                        "CreateOption" = $CR_OPT;
+                        "CreateStorageAccountId" = $CR_STO;
+                        "CreateImageReference" = $CR_IMG;
+                        "CreateGalleryImageReference" = $CR_REF;
+                        "CreateSourceUri" = $CR_SRC_ID;
+                        "CreateSourceResourceId" = $CR_SRC_RS;
+                        "CreateSourceUniqueId" = $CR_SRC_UN;
+                        "CreateUploadSizeBytes" = $CR_UPL;
+                        "DiskSizeGB" = $DSK_INF.DiskSizeGB;
+                        "DiskSizeMB" = ($DSK_INF.DiskSizeBytes / 1MB);
+                        "DiskSizeBytes" = $DSK_INF.DiskSizeBytes;
+                        "UniqueId" = $DSK_INF.UniqueId;
+                        "ProvisioningState" = $DSK_INF.ProvisioningState;
+                        "DiskIOPSReadWrite" = $DSK_INF.DiskIOPSReadWrite;
+                        "DiskMBpsReadWrite" = $DSK_INF.DiskMBpsReadWrite;
+                        "DiskIOPSReadOnly" = $RO_IOP;
+                        "DiskMBpsReadOnly" = $RO_MBP;
+                        "DiskState" = $DSK_INF.DiskState;
+                        "Encryption" = $DSK_INF.Encryption.Type;
+                        "Id" = $DSK_INF.Id;
+                        "Name" = $DSK_INF.Name;
+                        "Type" = $DSK_INF.Type;
+                        "Location" = $DSK_INF.Location;
+                        "Tags" = ($DSK_INF.Tags.Keys | Measure-Object).Count
+                        
+                    } | Out-Null
+                }
+                else{
+                    Add-AzTableRow `
+                    -UpdateExisting `
+                    -Table $OUT_DB_TBL_DSK.CloudTable `
+                    -PartitionKey $SUB.SubscriptionId `
+                    -RowKey $DSK_INF.Name `
+                    -Property @{
+                        "TenantId" = $SUB.TenantId;
+                        "ResourceGroupName" = $DSK_INF.ResourceGroupName;
+                        "ManagedBy" = $BY_MGM;
+                        "SkuName" = $DSK_INF.Sku.Name;
+                        "SkuTier" = $DSK_INF.sku.Tier;
+                        "TimeCreated" = $DSK_INF.TimeCreated;
+                        "OsType" = $TP_DSK;
+                        "DiskType" = $TP_DAT;
+                        "HyperVGeneration" = $HV_GEN;
+                        "CreateOption" = $CR_OPT;
+                        "CreateStorageAccountId" = $CR_STO;
+                        "CreateImageReference" = $CR_IMG;
+                        "CreateGalleryImageReference" = $CR_REF;
+                        "CreateSourceUri" = $CR_SRC_ID;
+                        "CreateSourceResourceId" = $CR_SRC_RS;
+                        "CreateSourceUniqueId" = $CR_SRC_UN;
+                        "CreateUploadSizeBytes" = $CR_UPL;
+                        "DiskSizeGB" = $DSK_INF.DiskSizeGB;
+                        "DiskSizeMB" = ($DSK_INF.DiskSizeBytes / 1MB);
+                        "DiskSizeBytes" = $DSK_INF.DiskSizeBytes;
+                        "UniqueId" = $DSK_INF.UniqueId;
+                        "ProvisioningState" = $DSK_INF.ProvisioningState;
+                        "DiskIOPSReadWrite" = $DSK_INF.DiskIOPSReadWrite;
+                        "DiskMBpsReadWrite" = $DSK_INF.DiskMBpsReadWrite;
+                        "DiskIOPSReadOnly" = $RO_IOP;
+                        "DiskMBpsReadOnly" = $RO_MBP;
+                        "DiskState" = $DSK_INF.DiskState;
+                        "Encryption" = $DSK_INF.Encryption.Type;
+                        "Id" = $DSK_INF.Id;
+                        "Name" = $DSK_INF.Name;
+                        "Type" = $DSK_INF.Type;
+                        "Location" = $DSK_INF.Location;
+                        "Tags" = ($DSK_INF.Tags.Keys | Measure-Object).Count
+                        
+                    } | Out-Null
+                }
+                
+                $GBL_IN_FOR_CNT++
+                    $DSK_INF.Zones
+                    $DSK_INF.EncryptionSettingsCollection
+                    $DSK_INF.MaxShares
+                    $DSK_INF.ShareInfo
+            }
+            if($DB_AZ_DSK_ALL.Count){
+                Write-Host "        Se cargaron " $DB_AZ_DSK_ALL.Length " discos exitosamente" -ForegroundColor DarkGreen
+            }
+            else{
+                Write-Host "        Se cargaron 1 disco exitosamente" -ForegroundColor DarkGreen
+            }
+            
+            $GBL_IN_FOR_CNT = 1
+        }
+        else{
+            Write-Host "        No se tienen discos que revisar" -ForegroundColor DarkGreen
+        }
+        
+        #endregion informacion de Azure Disks
+
+        #region informacion de  Azure SQL Server
+    
+        Write-Host "    L. Cargado de informacion de Azure SQL Server" -ForegroundColor Cyan
+        $DB_AZ_SQLSRV_ALL = $DB_AZ_RES_ALL | Where-Object {$_.ResourceType -eq 'Microsoft.Sql/servers'} | Select-Object *
+        if($DB_AZ_SQLSRV_ALL){
+            $OUT_DB_TBL_SQLSRV = Get-AzStorageTable -Context $OUT_TBL_CTX -Name ((($DB_AZ_SQLSRV_ALL | Select-Object ResourceType -Unique).ResourceType).ToLower().replace(".","").replace("/",""))
+            $GBL_IN_FOR_CNT = 1
+            foreach($SQLSRV in $DB_AZ_SQLSRV_ALL){
+                $SQLSRV_INF = Get-AzSqlServer -ResourceGroupName $SQLSRV.ResourceGroupName -Name $SQLSRV.Name
+                $WR_BAR = $SQLSRV_INF.ServerName
+                if($DB_AZ_SQLSRV_ALL.Count){
+                    Write-Progress -Activity " Azure SQL Server" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / $DB_AZ_SQLSRV_ALL.Count*100) -ErrorAction SilentlyContinue  -ParentId 100
+                }
+                else{
+                    Write-Progress -Activity " Azure SQL Server" -status "Revisando: $WR_BAR" -percentComplete ($GBL_IN_FOR_CNT / 1*100) -ErrorAction SilentlyContinue  -ParentId 100
+                }
+                #region comprobaciones internas de azure sql server
+                if($null -ne $SQLSRV_INF.Identity){
+                    $IDN_PRI = $SQLSRV_INF.Identity.PrincipalId.Guid;
+                    $IDN_TYP = $SQLSRV_INF.Identity.Type;
+                    $IDN_TNT = $SQLSRV_INF.Identity.TenantId.Guid;
+                }
+                else{
+                    $IDN_PRI = "Undefined"
+                    $IDN_TYP = "Undefined"
+                    $IDN_TNT = "Undefined"
+                }
+                if($null -ne $SQLSRV_INF.PublicNetworkAccess){
+                    $PUB_ACC = $SQLSRV_INF.PublicNetworkAccess
+                }
+                else{
+                    $PUB_ACC = "Undefined"
+                }
+                if($null -ne $SQLSRV_INF.MinimalTlsVersion){
+                    $TLS_VER = $SQLSRV_INF.MinimalTlsVersion
+                }
+                else{
+                    $TLS_VER = "Undefined"
+                }
+                #endregion comprobaciones internas de azure sql server
+                Add-AzTableRow `
+                -UpdateExisting `
+                -Table $OUT_DB_TBL_SQLSRV.CloudTable `
+                -PartitionKey $SUB.SubscriptionId `
+                -RowKey $SQLSRV_INF.ServerName `
+                -Property @{
+                    "TenantId" = $SUB.TenantId;
+                    "ResourceGroupName" = $SQLSRV_INF.ResourceGroupName;
+                    "Location" = $SQLSRV_INF.Location;
+                    "SqlAdministratorLogin" = $SQLSRV_INF.SqlAdministratorLogin;
+                    "ServerVersion" = $SQLSRV_INF.ServerVersion;
+                    "Tags" = ($SQLSRV_INF.Tags.Keys | Measure-Object).Count
+                    "IdentityPrincipalId" = $IDN_PRI;
+                    "IdentityType" = $IDN_TYP;
+                    "IdentityTenantId" = $IDN_TNT;
+                    "FullyQualifiedDomainName" = $SQLSRV_INF.FullyQualifiedDomainName;
+                    "ResourceId" = $SQLSRV_INF.ResourceId;
+                    "PublicNetworkAccess" = $PUB_ACC;
+                    "MinimalTlsVersion" = $TLS_VER;
+                } | Out-Null
+                $GBL_IN_FOR_CNT++
+            }
+            if($DB_AZ_SQLSRV_ALL.Count){
+                Write-Host "        Se cargaron " $DB_AZ_SQLSRV_ALL.Length " Azure SQL Server exitosamente" -ForegroundColor DarkGreen
+            }
+            else{
+                Write-Host "        Se cargaron 1 Azure SQL Server exitosamente" -ForegroundColor DarkGreen
+            }
+            
+            $GBL_IN_FOR_CNT = 1
+        }
+        else{
+            Write-Host "        No se tienen Azure SQL Server que revisar" -ForegroundColor DarkGreen
+        }
+        
+        #endregion informacion de  Azure SQL Server
+    
     }
     else{
-        Write-Host "    A. Suscripción deshabilitada" -ForegroundColor Cyan
+        Write-Host "    A. Suscripción deshabilitada" -ForegroundColor Cyan    
         Start-Sleep -Seconds 10
     }
-
     $GBL_IN_SUB_CNT++
 }
